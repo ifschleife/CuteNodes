@@ -1,10 +1,14 @@
 set(SOURCES
+    cutenodewidget.cpp
     main.cpp
     mainwindow.cpp
+    nodescene.cpp
     )
 
 set(HEADERS
+    cutenodewidget.h
     mainwindow.h
+    nodescene.h
     )
 
 set(UI_FILES

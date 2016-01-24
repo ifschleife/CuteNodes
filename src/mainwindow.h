@@ -20,5 +20,5 @@ public:
     ~MainWindow();
 
 private:
-    std::unique_ptr<Ui::MainWindow> m_ui;
+    std::unique_ptr<Ui::MainWindow> _ui;
 };
