@@ -1,5 +1,7 @@
 #include "nodescene.h"
 
+#include "cutenodewidget.h"
+
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -55,7 +57,8 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    _draggedItem = qgraphicsitem_cast<QGraphicsItem*>(itemAt(event->scenePos(), QTransform()));
+    // only allow dragging of CuteNodeWidget
+    _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(itemAt(event->scenePos(), QTransform()));
     if (_draggedItem)
     {
         _draggedOffset = event->scenePos() - _draggedItem->pos();
