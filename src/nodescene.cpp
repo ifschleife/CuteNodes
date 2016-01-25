@@ -2,6 +2,7 @@
 
 #include "cutenodewidget.h"
 
+#include <QApplication>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -57,8 +58,10 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    // only allow dragging of CuteNodeWidget
-    _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(itemAt(event->scenePos(), QTransform()));
+    QGraphicsItem* lowestItem = GetLowestItemThatWasClicked(event->scenePos());
+
+    // we only want to enter dragging state when the lowest item is of type CuteNodeWidget
+    _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(lowestItem);
     if (_draggedItem)
     {
         _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
@@ -82,4 +85,15 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         QGraphicsScene::mouseReleaseEvent(event);
     }
+}
+
+QGraphicsItem* NodeScene::GetLowestItemThatWasClicked(const QPointF& clickPos)
+{
+    QList<QGraphicsItem*> clickedItems = items(clickPos, Qt::IntersectsItemShape, Qt::AscendingOrder);
+    if (clickedItems.size() == 0)
+    {
+        return nullptr;
+    }
+
+    return clickedItems[0];
 }
