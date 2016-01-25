@@ -11,6 +11,9 @@ public:
     explicit NodeScene();
     ~NodeScene() override;
 
+public slots:
+    void ToggleGridSnapping();
+
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
@@ -25,4 +28,5 @@ private:
     QGraphicsItem* _draggedItem;
     QPointF        _draggingMousePointerOffset;
     QSize          _gridSize;
+    bool           _gridSnapping;
 };

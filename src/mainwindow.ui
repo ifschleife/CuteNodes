@@ -50,6 +50,12 @@
    </property>
   </action>
   <action name="actionToggleSnap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>ToggleSnap</string>
    </property>

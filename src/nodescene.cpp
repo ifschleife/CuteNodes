@@ -11,6 +11,7 @@ NodeScene::NodeScene()
     : _draggedItem{nullptr}
     , _draggingMousePointerOffset{0.0f, 0.0f}
     , _gridSize{25, 25}
+    , _gridSnapping{true}
 {
 
 }
@@ -18,6 +19,11 @@ NodeScene::NodeScene()
 NodeScene::~NodeScene()
 {
 
+}
+
+void NodeScene::ToggleGridSnapping()
+{
+    _gridSnapping = !_gridSnapping;
 }
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
@@ -77,10 +83,17 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (_draggedItem)
     {
-        int x = static_cast<int>(round(_draggedItem->scenePos().x() / _gridSize.width()) * _gridSize.width());
-        int y = static_cast<int>(round(_draggedItem->scenePos().y() / _gridSize.height()) * _gridSize.height());
+        int x = static_cast<int>(round(_draggedItem->scenePos().x()));
+        int y = static_cast<int>(round(_draggedItem->scenePos().y()));
+
+        if (_gridSnapping)
+        {
+            x = (x / _gridSize.width())  * _gridSize.width();
+            y = (y / _gridSize.height()) * _gridSize.height();
+        }
         _draggedItem->setPos(x, y);
         _draggedItem = nullptr;
+
         event->accept();
     }
     else

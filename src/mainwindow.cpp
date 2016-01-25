@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget* parent)
     _ui->graphicsView->setSceneRect(_ui->graphicsView->rect());
     _ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     _ui->graphicsView->show();
+
+    connect(_ui->actionToggleSnap, &QAction::triggered, scene, &NodeScene::ToggleGridSnapping);
 }
 
 MainWindow::~MainWindow()
