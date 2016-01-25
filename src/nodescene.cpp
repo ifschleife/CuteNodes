@@ -76,8 +76,8 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (_draggedItem)
     {
-        int x = static_cast<int>(floor(event->scenePos().x() / _gridSize.width()) * _gridSize.width());
-        int y = static_cast<int>(floor(event->scenePos().y() / _gridSize.height()) * _gridSize.height());
+        int x = static_cast<int>(round(_draggedItem->scenePos().x() / _gridSize.width()) * _gridSize.width());
+        int y = static_cast<int>(round(_draggedItem->scenePos().y() / _gridSize.height()) * _gridSize.height());
         _draggedItem->setPos(x, y);
         _draggedItem = nullptr;
     }
