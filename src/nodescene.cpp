@@ -9,7 +9,7 @@
 
 NodeScene::NodeScene()
     : _draggedItem{nullptr}
-    , _draggedOffset{0.0f, 0.0f}
+    , _draggingMousePointerOffset{0.0f, 0.0f}
     , _gridSize{25, 25}
 {
 
@@ -47,7 +47,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (_draggedItem)
     {
         // Ensure that the item's offset from the mouse cursor stays the same.
-        _draggedItem->setPos(event->scenePos() - _draggedOffset);
+        _draggedItem->setPos(event->scenePos() - _draggingMousePointerOffset);
     }
     else
     {
@@ -61,7 +61,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(itemAt(event->scenePos(), QTransform()));
     if (_draggedItem)
     {
-        _draggedOffset = event->scenePos() - _draggedItem->pos();
+        _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
     }
     else
     {

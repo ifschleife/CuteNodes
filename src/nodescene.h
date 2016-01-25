@@ -20,6 +20,6 @@ protected:
 
 private:
     QGraphicsItem* _draggedItem;
-    QPointF        _draggedOffset;
+    QPointF        _draggingMousePointerOffset;
     QSize          _gridSize;
 };
