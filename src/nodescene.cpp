@@ -2,7 +2,6 @@
 
 #include "cutenodewidget.h"
 
-#include <QApplication>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -49,6 +48,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     {
         // Ensure that the item's offset from the mouse cursor stays the same.
         _draggedItem->setPos(event->scenePos() - _draggingMousePointerOffset);
+        event->accept();
     }
     else
     {
@@ -65,6 +65,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     if (_draggedItem)
     {
         _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
+        event->accept();
     }
     else
     {
@@ -80,6 +81,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         int y = static_cast<int>(round(_draggedItem->scenePos().y() / _gridSize.height()) * _gridSize.height());
         _draggedItem->setPos(x, y);
         _draggedItem = nullptr;
+        event->accept();
     }
     else
     {

@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
     _ui->graphicsView->setScene(scene);
     _ui->graphicsView->resize(this->size());
     _ui->graphicsView->setSceneRect(_ui->graphicsView->rect());
+    _ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     _ui->graphicsView->show();
 }
 
