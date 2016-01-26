@@ -1,18 +1,18 @@
 set(SOURCES
-    cutenodewidget.cpp
+    CuteNodeWidget.cpp
     main.cpp
-    mainwindow.cpp
-    nodescene.cpp
+    MainWindow.cpp
+    NodeScene.cpp
     )
 
 set(HEADERS
-    cutenodewidget.h
-    mainwindow.h
-    nodescene.h
+    CuteNodeWidget.h
+    MainWindow.h
+    NodeScene.h
     )
 
 set(UI_FILES
-    mainwindow.ui
+    MainWindow.ui
     )
 
 set(QRC_FILES

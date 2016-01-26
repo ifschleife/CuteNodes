@@ -1,8 +1,8 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 
-#include "cutenodewidget.h"
-#include "nodescene.h"
+#include "CuteNodeWidget.h"
+#include "NodeScene.h"
 
 
 MainWindow::MainWindow(QWidget* parent)

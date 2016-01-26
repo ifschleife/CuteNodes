@@ -1,6 +1,6 @@
-#include "nodescene.h"
+#include "NodeScene.h"
 
-#include "cutenodewidget.h"
+#include "CuteNodeWidget.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>

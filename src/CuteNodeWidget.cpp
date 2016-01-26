@@ -1,9 +1,10 @@
-#include "cutenodewidget.h"
+#include "CuteNodeWidget.h"
 
 #include <QBrush>
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPainter>
 
 
@@ -18,7 +19,7 @@ CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags flags)
     layout->addItem(proxy, 0, 0);
 
     QGraphicsProxyWidget* proxy2 = new QGraphicsProxyWidget;
-    proxy2->setWidget(new QLabel("out"));
+    proxy2->setWidget(new QLineEdit("out"));
     layout->addItem(proxy2, 0, 1);
 
     setLayout(layout);
