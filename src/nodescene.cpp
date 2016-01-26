@@ -10,7 +10,7 @@
 NodeScene::NodeScene()
     : _draggedItem{nullptr}
     , _draggingMousePointerOffset{0.0f, 0.0f}
-    , _gridSize{25, 25}
+    , _gridSize{20, 20}
     , _gridSnapping{true}
 {
 
@@ -53,7 +53,16 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (_draggedItem)
     {
         // Ensure that the item's offset from the mouse cursor stays the same.
-        _draggedItem->setPos(event->scenePos() - _draggingMousePointerOffset);
+        QPointF scenePos = event->scenePos() - _draggingMousePointerOffset;
+
+        if (_gridSnapping)
+        {
+            scenePos.setX((round(scenePos.x() / _gridSize.width())) * _gridSize.width());
+            scenePos.setY((round(scenePos.y() / _gridSize.height())) * _gridSize.height());
+        }
+        
+        _draggedItem->setPos(scenePos);
+
         event->accept();
     }
     else
@@ -83,17 +92,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (_draggedItem)
     {
-        int x = static_cast<int>(round(_draggedItem->scenePos().x()));
-        int y = static_cast<int>(round(_draggedItem->scenePos().y()));
-
-        if (_gridSnapping)
-        {
-            x = (x / _gridSize.width())  * _gridSize.width();
-            y = (y / _gridSize.height()) * _gridSize.height();
-        }
-        _draggedItem->setPos(x, y);
         _draggedItem = nullptr;
-
         event->accept();
     }
     else
