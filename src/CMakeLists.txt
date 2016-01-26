@@ -3,12 +3,14 @@ set(SOURCES
     main.cpp
     MainWindow.cpp
     NodeScene.cpp
+    NodeView.cpp
     )
 
 set(HEADERS
     CuteNodeWidget.h
     MainWindow.h
     NodeScene.h
+    NodeView.h
     )
 
 set(UI_FILES

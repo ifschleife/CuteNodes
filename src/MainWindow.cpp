@@ -3,6 +3,7 @@
 
 #include "CuteNodeWidget.h"
 #include "NodeScene.h"
+#include "NodeView.h"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -11,16 +12,14 @@ MainWindow::MainWindow(QWidget* parent)
 {
     _ui->setupUi(this);
 
-    NodeScene* scene = new NodeScene;
-
+    NodeScene* scene = new NodeScene(QRectF(0.0, 0.0, 3000.0, 3000.0));
     scene->addItem(new CuteNodeWidget);
 
-    _ui->graphicsView->rect();
-    _ui->graphicsView->setScene(scene);
-    _ui->graphicsView->resize(this->size());
-    _ui->graphicsView->setSceneRect(_ui->graphicsView->rect());
-    _ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-    _ui->graphicsView->show();
+    _ui->nodeView->rect();
+    _ui->nodeView->setScene(scene);
+    _ui->nodeView->centerOn(0.0, 0.0);
+    _ui->nodeView->setDragMode(QGraphicsView::RubberBandDrag);
+    _ui->nodeView->show();
 
     connect(_ui->actionToggleSnap, &QAction::triggered, scene, &NodeScene::ToggleGridSnapping);
 }

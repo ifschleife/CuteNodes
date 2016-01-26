@@ -7,8 +7,9 @@
 #include <QPainter>
 
 
-NodeScene::NodeScene()
-    : _draggedItem{nullptr}
+NodeScene::NodeScene(const QRectF& sceneRect)
+    : QGraphicsScene(sceneRect, nullptr)
+    , _draggedItem{nullptr}
     , _draggingMousePointerOffset{0.0f, 0.0f}
     , _gridSize{20, 20}
     , _gridSnapping{true}
@@ -74,9 +75,9 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem* lowestItem = GetLowestItemThatWasClicked(event->scenePos());
-
     // we only want to enter dragging state when the lowest item is of type CuteNodeWidget
     _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(lowestItem);
+
     if (_draggedItem)
     {
         _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();

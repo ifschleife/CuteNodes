@@ -8,7 +8,7 @@
 class NodeScene : public QGraphicsScene
 {
 public:
-    explicit NodeScene();
+    explicit NodeScene(const QRectF& sceneRect);
     ~NodeScene() override;
 
 public slots:
