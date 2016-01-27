@@ -10,6 +10,8 @@ namespace Ui
     class MainWindow;
 }
 
+class NodeScene;
+
 
 class MainWindow : public QMainWindow
 {
@@ -20,5 +22,6 @@ public:
     ~MainWindow();
 
 private:
+    std::unique_ptr<NodeScene>      _scene;
     std::unique_ptr<Ui::MainWindow> _ui;
 };
