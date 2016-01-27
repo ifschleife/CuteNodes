@@ -20,18 +20,20 @@ NodeView::~NodeView()
 
 void NodeView::mouseMoveEvent(QMouseEvent* event)
 {
-    if (_isPanning)
+    if (event->buttons() == Qt::MiddleButton)
     {
-        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _panStartPos.x()));
-        verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _panStartPos.y()));
-        _panStartPos = event->pos();
+        if (_isPanning)
+        {
+            horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _panStartPos.x()));
+            verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _panStartPos.y()));
+            _panStartPos = event->pos();
 
-        event->accept();
+            event->accept();
+            return;
+        }
     }
-    else
-    {
-        QGraphicsView::mouseMoveEvent(event);
-    }
+
+    QGraphicsView::mouseMoveEvent(event);
 }
 
 void NodeView::mousePressEvent(QMouseEvent* event)
@@ -43,11 +45,10 @@ void NodeView::mousePressEvent(QMouseEvent* event)
         setCursor(Qt::ClosedHandCursor);
 
         event->accept();
+        return;
     }
-    else
-    {
-        QGraphicsView::mousePressEvent(event);
-    }
+
+    QGraphicsView::mousePressEvent(event);
 }
 
 void NodeView::mouseReleaseEvent(QMouseEvent* event)
@@ -58,9 +59,8 @@ void NodeView::mouseReleaseEvent(QMouseEvent* event)
         setCursor(Qt::ArrowCursor);
 
         event->accept();
+        return;
     }
-    else
-    {
-        QGraphicsView::mouseReleaseEvent(event);
-    }
+
+    QGraphicsView::mouseReleaseEvent(event);
 }

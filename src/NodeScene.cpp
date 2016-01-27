@@ -51,55 +51,63 @@ void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 
 void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (_draggedItem)
+    if (event->buttons() == Qt::LeftButton)
     {
-        // Ensure that the item's offset from the mouse cursor stays the same.
-        QPointF scenePos = event->scenePos() - _draggingMousePointerOffset;
-
-        if (_gridSnapping)
+        if (_draggedItem)
         {
-            scenePos.setX((round(scenePos.x() / _gridSize.width())) * _gridSize.width());
-            scenePos.setY((round(scenePos.y() / _gridSize.height())) * _gridSize.height());
-        }
-        
-        _draggedItem->setPos(scenePos);
+            // Ensure that the item's offset from the mouse cursor stays the same.
+            QPointF scenePos = event->scenePos() - _draggingMousePointerOffset;
 
-        event->accept();
+            if (_gridSnapping)
+            {
+                scenePos.setX((round(scenePos.x() / _gridSize.width())) * _gridSize.width());
+                scenePos.setY((round(scenePos.y() / _gridSize.height())) * _gridSize.height());
+            }
+
+            _draggedItem->setPos(scenePos);
+
+            event->accept();
+            return;
+        }
     }
-    else
-    {
-        QGraphicsScene::mouseMoveEvent(event);
-    }
+
+    event->ignore();
 }
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    QGraphicsItem* lowestItem = GetLowestItemThatWasClicked(event->scenePos());
-    // we only want to enter dragging state when the lowest item is of type CuteNodeWidget
-    _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(lowestItem);
+    if (event->buttons() == Qt::LeftButton)
+    {
+        QGraphicsItem* lowestItem = GetLowestItemThatWasClicked(event->scenePos());
+        // we only want to enter dragging state when the lowest item is of type CuteNodeWidget
+        _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(lowestItem);
 
-    if (_draggedItem)
-    {
-        _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
-        event->accept();
+        if (_draggedItem)
+        {
+            _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
+
+            event->accept();
+            return;
+        }
     }
-    else
-    {
-        QGraphicsScene::mousePressEvent(event);
-    }
+
+    event->ignore();
 }
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (_draggedItem)
+    if (event->buttons() == Qt::LeftButton)
     {
-        _draggedItem = nullptr;
-        event->accept();
+        if (_draggedItem)
+        {
+            _draggedItem = nullptr;
+
+            event->accept();
+            return;
+        }
     }
-    else
-    {
-        QGraphicsScene::mouseReleaseEvent(event);
-    }
+
+    event->ignore();
 }
 
 QGraphicsItem* NodeScene::GetLowestItemThatWasClicked(const QPointF& clickPos)
