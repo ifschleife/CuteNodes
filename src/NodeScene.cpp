@@ -2,6 +2,7 @@
 
 #include "CuteNodeWidget.h"
 
+#include <QDebug>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -99,7 +100,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (event->buttons() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
     {
         if (_draggedItem)
         {
@@ -111,6 +112,16 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 
     event->ignore();
+}
+
+void NodeScene::wheelEvent(QGraphicsSceneWheelEvent* event)
+{
+    if (_draggedItem)
+    {
+        // this removes glitches when moving an item while scrolling
+        invalidate(_draggedItem->sceneBoundingRect());
+    }
+    QGraphicsScene::wheelEvent(event);
 }
 
 QGraphicsItem* NodeScene::GetLowestItemThatWasClicked(const QPointF& clickPos)
