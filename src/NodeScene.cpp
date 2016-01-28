@@ -100,6 +100,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
         if (_draggedItem)
