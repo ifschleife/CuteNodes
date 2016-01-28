@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
     _ui->nodeView->setScene(_scene.get());
     _ui->nodeView->centerOn(0.0, 0.0);
     _ui->nodeView->setDragMode(QGraphicsView::RubberBandDrag);
+    _ui->nodeView->setRenderHints(QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
     _ui->nodeView->show();
 
     connect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::ToggleGridSnapping);
