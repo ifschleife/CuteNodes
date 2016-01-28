@@ -86,6 +86,9 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
 
+            // this removes glitches when moving an item after scrolling
+            invalidate(_draggedItem->sceneBoundingRect());
+
             event->accept();
             return;
         }
