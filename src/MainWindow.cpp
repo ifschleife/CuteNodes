@@ -13,9 +13,13 @@ MainWindow::MainWindow(QWidget* parent)
 {
     _ui->setupUi(this);
 
-    _scene->addItem(new CuteNodeWidget);
+    for (int i=0; i<5; ++i)
+    {
+        CuteNodeWidget* node = new CuteNodeWidget;
+        node->setPos(i*300.0, 300.0);
+        _scene->addItem(node);
+    }
 
-    _ui->nodeView->rect();
     _ui->nodeView->setScene(_scene.get());
     _ui->nodeView->centerOn(0.0, 0.0);
     _ui->nodeView->setDragMode(QGraphicsView::RubberBandDrag);
