@@ -23,9 +23,6 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
 private:
-    QGraphicsItem* GetLowestItemThatWasClicked(const QPointF& clickPos);
-
-private:
     QGraphicsItem* _draggedItem;
     QPointF        _draggingMousePointerOffset;
     QSize          _gridSize;

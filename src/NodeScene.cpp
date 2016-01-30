@@ -79,9 +79,10 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
-        QGraphicsItem* lowestItem = GetLowestItemThatWasClicked(event->scenePos());
-        // we only want to enter dragging state when the lowest item is of type CuteNodeWidget
-        _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(lowestItem);
+        QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
+        QGraphicsWidget* clickedWidget = clickedItem ? clickedItem->topLevelWidget() : nullptr;
+        // we only want to enter dragging state when the clicked widget is of type CuteNodeWidget
+        _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(clickedWidget);
 
         if (_draggedItem)
         {
@@ -123,15 +124,4 @@ void NodeScene::wheelEvent(QGraphicsSceneWheelEvent* event)
         invalidate(_draggedItem->sceneBoundingRect());
     }
     QGraphicsScene::wheelEvent(event);
-}
-
-QGraphicsItem* NodeScene::GetLowestItemThatWasClicked(const QPointF& clickPos)
-{
-    QList<QGraphicsItem*> clickedItems = items(clickPos, Qt::IntersectsItemShape, Qt::AscendingOrder);
-    if (clickedItems.size() == 0)
-    {
-        return nullptr;
-    }
-
-    return clickedItems[0];
 }
