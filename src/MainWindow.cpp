@@ -32,3 +32,10 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {
 }
+
+void MainWindow::on_actionAddNode_triggered()
+{
+    CuteNodeWidget* node = new CuteNodeWidget;
+    node->setPos(500, 300);
+    _scene->addItem(node);
+}

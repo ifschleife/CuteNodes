@@ -37,6 +37,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionAddNode"/>
    <addaction name="actionToggleGrid"/>
    <addaction name="actionToggleSnap"/>
   </widget>
@@ -61,6 +62,14 @@
    </property>
    <property name="toolTip">
     <string>Toggle grid snapping</string>
+   </property>
+  </action>
+  <action name="actionAddNode">
+   <property name="text">
+    <string>Add Node</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a new node</string>
    </property>
   </action>
  </widget>
