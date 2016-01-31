@@ -3,7 +3,6 @@
 
 #include "CuteNodeWidget.h"
 #include "NodeScene.h"
-#include "NodeView.h"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -26,7 +25,7 @@ MainWindow::MainWindow(QWidget* parent)
     _ui->nodeView->setRenderHints(QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
     _ui->nodeView->show();
 
-    connect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::ToggleGridSnapping);
+    connect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
 }
 
 MainWindow::~MainWindow()

@@ -9,7 +9,7 @@ class NodeView : public QGraphicsView
 {
 public:
     explicit NodeView(QWidget* parent = nullptr);
-    ~NodeView();
+    ~NodeView() override;
 
 private:
     void mouseMoveEvent(QMouseEvent* event) override;
@@ -18,7 +18,7 @@ private:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-    bool   _isPanning;
-    QPoint _panStartPos;
-    qreal  _sceneScale;
+    bool   _isPanning{false};
+    QPoint _panStartPos{0, 0};
+    qreal  _sceneScale{1.0};
 };

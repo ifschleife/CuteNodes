@@ -12,7 +12,7 @@ public:
     ~NodeScene() override;
 
 public slots:
-    void ToggleGridSnapping();
+    void toggleGridSnapping();
 
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
@@ -25,8 +25,8 @@ private:
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
 private:
-    QGraphicsItem* _draggedItem;
-    QPointF        _draggingMousePointerOffset;
-    QSize          _gridSize;
-    bool           _gridSnapping;
+    QGraphicsItem* _draggedItem{nullptr};
+    QPointF        _draggingMousePointerOffset{0.0, 0.0};
+    QSize          _gridSize{20, 20};
+    bool           _gridSnapping{true};
 };

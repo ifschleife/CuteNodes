@@ -16,9 +16,6 @@ namespace
 
 NodeView::NodeView(QWidget* parent)
     : QGraphicsView(parent)
-    , _isPanning{false}
-    , _panStartPos{0, 0}
-    , _sceneScale{1.0}
 {
 
 }

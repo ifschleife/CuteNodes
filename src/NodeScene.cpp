@@ -2,7 +2,6 @@
 
 #include "CuteNodeWidget.h"
 
-#include <QDebug>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -10,10 +9,6 @@
 
 NodeScene::NodeScene(const QRectF& sceneRect)
     : QGraphicsScene(sceneRect, nullptr)
-    , _draggedItem{nullptr}
-    , _draggingMousePointerOffset{0.0f, 0.0f}
-    , _gridSize{20, 20}
-    , _gridSnapping{true}
 {
 
 }
@@ -23,10 +18,12 @@ NodeScene::~NodeScene()
 
 }
 
-void NodeScene::ToggleGridSnapping()
+
+void NodeScene::toggleGridSnapping()
 {
     _gridSnapping = !_gridSnapping;
 }
+
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
