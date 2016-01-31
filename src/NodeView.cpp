@@ -3,11 +3,22 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
+#include <algorithm>
+
+
+namespace
+{
+    constexpr qreal MinScale           = 0.5;
+    constexpr qreal MaxScale           = 3.0;
+    constexpr qreal DefaultScaleFactor = 1.10;
+}
+
 
 NodeView::NodeView(QWidget* parent)
     : QGraphicsView(parent)
     , _isPanning{false}
     , _panStartPos{0, 0}
+    , _sceneScale{1.0}
 {
 
 }
@@ -63,4 +74,28 @@ void NodeView::mouseReleaseEvent(QMouseEvent* event)
     }
 
     QGraphicsView::mouseReleaseEvent(event);
+}
+
+void NodeView::wheelEvent(QWheelEvent* event)
+{
+    // Adapted from http://stackoverflow.com/a/20802191/578536
+    const QPointF sceneMousePos = mapToScene(event->pos());
+
+    if (event->delta() > 0 && _sceneScale < MaxScale)
+    {
+        scale(DefaultScaleFactor, DefaultScaleFactor);
+        _sceneScale *= DefaultScaleFactor;
+    }
+    else if (event->delta() < 0 && _sceneScale > MinScale)
+    {
+        scale(1.0 / DefaultScaleFactor, 1.0 / DefaultScaleFactor);
+        _sceneScale /= DefaultScaleFactor;
+    }
+
+    const QPointF scaledMousePos = mapFromScene(sceneMousePos);
+    const QPointF deltaMouse = scaledMousePos - event->pos();
+    horizontalScrollBar()->setValue(static_cast<int>(deltaMouse.x() + horizontalScrollBar()->value()));
+    verticalScrollBar()->setValue(static_cast<int>(deltaMouse.y() + verticalScrollBar()->value()));
+
+    event->accept();
 }
