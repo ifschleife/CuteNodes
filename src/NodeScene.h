@@ -14,10 +14,12 @@ public:
 public slots:
     void ToggleGridSnapping();
 
-protected:
+private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    bool draggedNodePositionIsValid(const QPointF& nodePos) const;
+
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;

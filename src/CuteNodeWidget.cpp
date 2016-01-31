@@ -12,6 +12,7 @@ CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags flags)
     : QGraphicsWidget(parent, flags)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemContainsChildrenInShape);
     QGraphicsGridLayout* layout = new QGraphicsGridLayout;
 
     QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget;

@@ -57,15 +57,18 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         if (_draggedItem)
         {
             // Ensure that the item's offset from the mouse cursor stays the same.
-            QPointF scenePos = event->scenePos() - _draggingMousePointerOffset;
+            QPointF newScenePos = event->scenePos() - _draggingMousePointerOffset;
 
             if (_gridSnapping)
             {
-                scenePos.setX((round(scenePos.x() / _gridSize.width())) * _gridSize.width());
-                scenePos.setY((round(scenePos.y() / _gridSize.height())) * _gridSize.height());
+                newScenePos.setX((round(newScenePos.x() / _gridSize.width())) * _gridSize.width());
+                newScenePos.setY((round(newScenePos.y() / _gridSize.height())) * _gridSize.height());
             }
 
-            _draggedItem->setPos(scenePos);
+            if (draggedNodePositionIsValid(newScenePos))
+            {
+                _draggedItem->setPos(newScenePos);
+            }
 
             event->accept();
             return;
@@ -73,6 +76,27 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 
     event->ignore();
+}
+
+bool NodeScene::draggedNodePositionIsValid(const QPointF& nodePos) const
+{
+    // this is the bounding rect the item will have when it has been moved
+    QRectF newBoundingRect = _draggedItem->sceneBoundingRect();
+    newBoundingRect.moveTo(nodePos);
+
+    // check if there are other items in this new area
+    QList<QGraphicsItem*> itemsInNewBoundingRect = items(newBoundingRect, Qt::IntersectsItemBoundingRect);
+    for (const auto collidingItem: itemsInNewBoundingRect)
+    {
+        // ignore child items
+        QGraphicsItem* topItem = collidingItem->topLevelItem();
+        if (topItem != _draggedItem)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
