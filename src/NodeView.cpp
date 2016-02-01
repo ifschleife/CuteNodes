@@ -17,7 +17,8 @@ namespace
 NodeView::NodeView(QWidget* parent)
     : QGraphicsView(parent)
 {
-
+    setDragMode(RubberBandDrag);
+    setRenderHints(QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
 }
 
 NodeView::~NodeView()
