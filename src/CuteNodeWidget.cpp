@@ -8,11 +8,11 @@
 #include <QPainter>
 
 
-CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags flags)
-    : QGraphicsWidget(parent, flags)
+CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags winFlags)
+    : QGraphicsWidget(parent, winFlags)
 {
-    setFlag(QGraphicsItem::ItemIsMovable);
-    setFlag(QGraphicsItem::ItemContainsChildrenInShape);
+    setFlags(flags() | ItemContainsChildrenInShape | ItemIsMovable | ItemIsSelectable);
+
     QGraphicsGridLayout* layout = new QGraphicsGridLayout;
 
     QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget;
@@ -34,9 +34,22 @@ CuteNodeWidget::~CuteNodeWidget()
 
 }
 
+
+QVariant CuteNodeWidget::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemSelectedHasChanged)
+    {
+        const bool nodeSelected = value.toBool() == true;
+        _pen.setColor(nodeSelected ? Qt::red : Qt::black);
+    }
+
+    return QGraphicsWidget::itemChange(change, value);
+}
+
 void CuteNodeWidget::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     QBrush brush(Qt::darkGray);
+    painter->setPen(_pen);
     painter->setBrush(brush);
     painter->drawRect(boundingRect());
 }

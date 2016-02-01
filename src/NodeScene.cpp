@@ -101,20 +101,27 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     if (event->buttons() == Qt::LeftButton)
     {
         QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-        QGraphicsWidget* clickedWidget = clickedItem ? clickedItem->topLevelWidget() : nullptr;
-        // we only want to enter dragging state when the clicked widget is of type CuteNodeWidget
-        _draggedItem = qgraphicsitem_cast<CuteNodeWidget*>(clickedWidget);
+        QGraphicsWidget* clickedNode = clickedItem ? clickedItem->topLevelWidget() : nullptr;
 
-        if (_draggedItem)
+        QList<QGraphicsItem*> selectedNodes = selectedItems();
+        for (auto selectedNode: selectedNodes)
         {
+            selectedNode->setSelected(false);
+        }
+
+        if (clickedNode)
+        {
+            clickedNode->setSelected(true);
+
+            _draggedItem = clickedNode;
             _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
 
             // this removes glitches when moving an item after scrolling
             invalidate(_draggedItem->sceneBoundingRect());
-
-            event->accept();
-            return;
         }
+
+        event->accept();
+        return;
     }
 
     event->ignore();
