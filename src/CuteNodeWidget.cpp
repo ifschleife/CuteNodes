@@ -4,7 +4,6 @@
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
 #include <QLabel>
-#include <QLineEdit>
 #include <QPainter>
 
 
@@ -20,7 +19,7 @@ CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags winFlags)
     layout->addItem(proxy, 0, 0);
 
     QGraphicsProxyWidget* proxy2 = new QGraphicsProxyWidget;
-    proxy2->setWidget(new QLineEdit("out"));
+    proxy2->setWidget(new QLabel("out"));
     layout->addItem(proxy2, 0, 1);
 
     setLayout(layout);
@@ -34,6 +33,16 @@ CuteNodeWidget::~CuteNodeWidget()
 
 }
 
+
+const QPointF& CuteNodeWidget::getMousePosOffset() const
+{
+    return _mousePosOffset;
+}
+
+void CuteNodeWidget::storeMousePosOffset(const QPointF& mousePos)
+{
+    _mousePosOffset = mousePos - pos();
+}
 
 QVariant CuteNodeWidget::itemChange(GraphicsItemChange change, const QVariant& value)
 {

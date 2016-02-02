@@ -51,34 +51,32 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
-        if (_draggedItem)
+        for (auto node: _draggedNodes)
         {
-            // Ensure that the item's offset from the mouse cursor stays the same.
-            QPointF newScenePos = event->scenePos() - _draggingMousePointerOffset;
-
+            QPointF newNodePos = event->scenePos() - node->getMousePosOffset();
             if (_gridSnapping)
             {
-                newScenePos.setX((round(newScenePos.x() / _gridSize.width())) * _gridSize.width());
-                newScenePos.setY((round(newScenePos.y() / _gridSize.height())) * _gridSize.height());
+                newNodePos.setX((round(newNodePos.x() / _gridSize.width())) * _gridSize.width());
+                newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
             }
 
-            if (draggedNodePositionIsValid(newScenePos))
+            if (draggedNodePositionIsValid(node, newNodePos))
             {
-                _draggedItem->setPos(newScenePos);
+                node->setPos(newNodePos);
             }
-
-            event->accept();
-            return;
         }
+
+        event->accept();
+        return;
     }
 
-    event->ignore();
+    QGraphicsScene::mouseMoveEvent(event);
 }
 
-bool NodeScene::draggedNodePositionIsValid(const QPointF& nodePos) const
+bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const
 {
     // this is the bounding rect the item will have when it has been moved
-    QRectF newBoundingRect = _draggedItem->sceneBoundingRect();
+    QRectF newBoundingRect = node->sceneBoundingRect();
     newBoundingRect.moveTo(nodePos);
 
     // check if there are other items in this new area
@@ -87,7 +85,7 @@ bool NodeScene::draggedNodePositionIsValid(const QPointF& nodePos) const
     {
         // ignore child items
         QGraphicsItem* topItem = collidingItem->topLevelItem();
-        if (topItem != _draggedItem)
+        if (topItem != node)
         {
             return false;
         }
@@ -98,33 +96,31 @@ bool NodeScene::draggedNodePositionIsValid(const QPointF& nodePos) const
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    // needs to be called first so selection is up to date
+    QGraphicsScene::mousePressEvent(event);
+
     if (event->buttons() == Qt::LeftButton)
     {
         QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-        QGraphicsWidget* clickedNode = clickedItem ? clickedItem->topLevelWidget() : nullptr;
+        QGraphicsWidget* clickedWidget = clickedItem ? clickedItem->topLevelWidget() : nullptr;
+        bool nodeWasClicked = qgraphicsitem_cast<CuteNodeWidget*>(clickedWidget) != nullptr;
 
-        QList<QGraphicsItem*> selectedNodes = selectedItems();
-        for (auto selectedNode: selectedNodes)
+        if (nodeWasClicked)
         {
-            selectedNode->setSelected(false);
+            _draggedNodes.reserve(selectedItems().size());
+            for (auto item: selectedItems())
+            {
+                auto node = qgraphicsitem_cast<CuteNodeWidget*>(item);
+                if (node)
+                {
+                    _draggedNodes.emplace_back(node);
+                    node->storeMousePosOffset(event->scenePos());
+                    // this removes glitches when moving an item after panning/scrolling
+                    invalidate(node->boundingRect());
+                }
+            }
         }
-
-        if (clickedNode)
-        {
-            clickedNode->setSelected(true);
-
-            _draggedItem = clickedNode;
-            _draggingMousePointerOffset = event->scenePos() - _draggedItem->pos();
-
-            // this removes glitches when moving an item after scrolling
-            invalidate(_draggedItem->sceneBoundingRect());
-        }
-
-        event->accept();
-        return;
     }
-
-    event->ignore();
 }
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
@@ -132,24 +128,8 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
-        if (_draggedItem)
-        {
-            _draggedItem = nullptr;
-
-            event->accept();
-            return;
-        }
+        _draggedNodes.clear();
     }
 
-    event->ignore();
-}
-
-void NodeScene::wheelEvent(QGraphicsSceneWheelEvent* event)
-{
-    if (_draggedItem)
-    {
-        // this removes glitches when moving an item while scrolling
-        invalidate(_draggedItem->sceneBoundingRect());
-    }
-    QGraphicsScene::wheelEvent(event);
+    QGraphicsScene::mouseReleaseEvent(event);
 }

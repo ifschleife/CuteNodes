@@ -12,10 +12,14 @@ public:
     explicit CuteNodeWidget(QGraphicsItem* parent = nullptr, Qt::WindowFlags winFlags = 0);
     ~CuteNodeWidget() override;
 
+    const QPointF& getMousePosOffset() const;
+    void storeMousePosOffset(const QPointF& mousePos);
+
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
-    QPen _pen{Qt::black};
+    QPointF _mousePosOffset{0.0, 0.0};
+    QPen    _pen{Qt::black};
 };
