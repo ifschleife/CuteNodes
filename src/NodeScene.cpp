@@ -9,8 +9,8 @@
 
 namespace
 {
-    constexpr qreal ZValueShowOnTop = 1.0;
     constexpr qreal ZValueDefault   = -1.0;
+    constexpr qreal ZValueShowOnTop = 1.0;
 }
 
 

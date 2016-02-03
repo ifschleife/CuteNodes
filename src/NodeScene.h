@@ -13,7 +13,7 @@ public:
     ~NodeScene() override;
 
 public slots:
-    void toggleGridSnapping()  { _gridSnapping = !_gridSnapping; }
+    void toggleGridSnapping()  { _gridSnapping  = !_gridSnapping;  }
     void toggleNodeCollision() { _nodeCollision = !_nodeCollision; }
 
 private:
