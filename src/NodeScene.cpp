@@ -80,18 +80,14 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
     newBoundingRect.moveTo(nodePos);
 
     // check if there are other items in this new area
-    QList<QGraphicsItem*> itemsInNewBoundingRect = items(newBoundingRect, Qt::IntersectsItemBoundingRect);
-    for (const auto collidingItem: itemsInNewBoundingRect)
-    {
-        // ignore child items
-        QGraphicsItem* topItem = collidingItem->topLevelItem();
-        if (topItem != node)
-        {
-            return false;
-        }
-    }
+    QList<QGraphicsItem*> potentialColliders = items(newBoundingRect, Qt::IntersectsItemBoundingRect);
 
-    return true;
+    bool collision = std::any_of(potentialColliders.begin(), potentialColliders.end(), [&node](const auto& item)
+    {
+        return item->topLevelItem() != node;
+    });
+
+    return !collision;
 }
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
