@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget* parent)
     _ui->nodeView->centerOn(0.0, 0.0);
 
     connect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
+    connect(_ui->actionToggleCollision, &QAction::triggered, _scene.get(), &NodeScene::toggleNodeCollision);
 }
 
 MainWindow::~MainWindow()

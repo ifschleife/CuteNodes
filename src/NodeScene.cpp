@@ -7,6 +7,13 @@
 #include <QPainter>
 
 
+namespace
+{
+    constexpr qreal ZValueShowOnTop = 1.0;
+    constexpr qreal ZValueDefault   = -1.0;
+}
+
+
 NodeScene::NodeScene(const QRectF& sceneRect)
     : QGraphicsScene(sceneRect, nullptr)
 {
@@ -16,12 +23,6 @@ NodeScene::NodeScene(const QRectF& sceneRect)
 NodeScene::~NodeScene()
 {
 
-}
-
-
-void NodeScene::toggleGridSnapping()
-{
-    _gridSnapping = !_gridSnapping;
 }
 
 
@@ -60,7 +61,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
                 newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
             }
 
-            if (draggedNodePositionIsValid(draggedNode.first, newNodePos))
+            if (_nodeCollision || draggedNodePositionIsValid(draggedNode.first, newNodePos))
             {
                 draggedNode.first->setPos(newNodePos);
             }
@@ -114,6 +115,9 @@ void NodeScene::startDraggingSelectedNodes(const QPointF& dragStartPos)
     _draggedNodes.reserve(selectedNodes.size());
     for (const auto& node: selectedNodes)
     {
+        // make sure dragged node is drawn on top of other nodes
+        node->setZValue(ZValueShowOnTop);
+        // store mouse pointer offset next to dragged node
         _draggedNodes.emplace_back(std::make_pair(node, dragStartPos - node->pos()));
         // this removes glitches when moving an item after panning/scrolling
         invalidate(node->boundingRect());
@@ -136,6 +140,11 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
+        // reset z value to default
+        for (const auto& node: _draggedNodes)
+        {
+            node.first->setZValue(ZValueDefault);
+        }
         _draggedNodes.clear();
     }
 
