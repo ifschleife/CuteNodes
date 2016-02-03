@@ -51,18 +51,18 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
-        for (auto node: _draggedNodes)
+        for (const auto& draggedNode: _draggedNodes)
         {
-            QPointF newNodePos = event->scenePos() - node->getMousePosOffset();
+            QPointF newNodePos = event->scenePos() - draggedNode.second;
             if (_gridSnapping)
             {
                 newNodePos.setX((round(newNodePos.x() / _gridSize.width())) * _gridSize.width());
                 newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
             }
 
-            if (draggedNodePositionIsValid(node, newNodePos))
+            if (draggedNodePositionIsValid(draggedNode.first, newNodePos))
             {
-                node->setPos(newNodePos);
+                draggedNode.first->setPos(newNodePos);
             }
         }
 
@@ -103,20 +103,32 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
         if (nodeWasClicked)
         {
-            _draggedNodes.reserve(selectedItems().size());
-            for (auto item: selectedItems())
-            {
-                auto node = qgraphicsitem_cast<CuteNodeWidget*>(item);
-                if (node)
-                {
-                    _draggedNodes.emplace_back(node);
-                    node->storeMousePosOffset(event->scenePos());
-                    // this removes glitches when moving an item after panning/scrolling
-                    invalidate(node->boundingRect());
-                }
-            }
+            startDraggingSelectedNodes(event->scenePos());
         }
     }
+}
+
+void NodeScene::startDraggingSelectedNodes(const QPointF& dragStartPos)
+{
+    const auto selectedNodes = getSelectedNodes();
+    _draggedNodes.reserve(selectedNodes.size());
+    for (const auto& node: selectedNodes)
+    {
+        _draggedNodes.emplace_back(std::make_pair(node, dragStartPos - node->pos()));
+        // this removes glitches when moving an item after panning/scrolling
+        invalidate(node->boundingRect());
+    }
+}
+
+std::vector<QGraphicsItem*> NodeScene::getSelectedNodes() const
+{
+    QList<QGraphicsItem*> items = selectedItems();
+
+    auto lastNode = std::partition(items.begin(), items.end(), [](const auto& item)
+    {
+        return qgraphicsitem_cast<CuteNodeWidget*>(item) != nullptr;
+    });
+    return {items.begin(), lastNode};
 }
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)

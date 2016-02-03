@@ -34,16 +34,6 @@ CuteNodeWidget::~CuteNodeWidget()
 }
 
 
-const QPointF& CuteNodeWidget::getMousePosOffset() const
-{
-    return _mousePosOffset;
-}
-
-void CuteNodeWidget::storeMousePosOffset(const QPointF& mousePos)
-{
-    _mousePosOffset = mousePos - pos();
-}
-
 QVariant CuteNodeWidget::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemSelectedHasChanged)
