@@ -40,7 +40,7 @@
    <addaction name="actionAddNode"/>
    <addaction name="actionToggleGrid"/>
    <addaction name="actionToggleSnap"/>
-   <addaction name="actionToggleCollision"/>
+   <addaction name="actionToggleOverlap"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionToggleGrid">
@@ -73,15 +73,15 @@
     <string>Add a new node</string>
    </property>
   </action>
-  <action name="actionToggleCollision">
+  <action name="actionToggleOverlap">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>ToggleCollision</string>
+    <string>Toggle Overlap</string>
    </property>
    <property name="toolTip">
-    <string>Toggle Node collision</string>
+    <string>Toggle Node overlap</string>
    </property>
   </action>
  </widget>

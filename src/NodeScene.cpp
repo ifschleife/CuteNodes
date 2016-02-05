@@ -61,7 +61,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
                 newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
             }
 
-            if (_nodeCollision || draggedNodePositionIsValid(draggedNode.first, newNodePos))
+            if (_nodeOverlap || draggedNodePositionIsValid(draggedNode.first, newNodePos))
             {
                 draggedNode.first->setPos(newNodePos);
             }

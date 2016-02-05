@@ -13,8 +13,8 @@ public:
     ~NodeScene() override;
 
 public slots:
-    void toggleGridSnapping()  { _gridSnapping  = !_gridSnapping;  }
-    void toggleNodeCollision() { _nodeCollision = !_nodeCollision; }
+    void toggleGridSnapping()  { _gridSnapping  = !_gridSnapping; }
+    void toggleNodeOverlap()   { _nodeOverlap   = !_nodeOverlap;  }
 
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
@@ -34,5 +34,5 @@ private:
     std::vector<DraggedNode> _draggedNodes;
     QSize                    _gridSize{20, 20};
     bool                     _gridSnapping{true};
-    bool                     _nodeCollision{false};
+    bool                     _nodeOverlap{false};
 };
