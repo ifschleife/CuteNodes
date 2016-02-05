@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include "CuteNodeWidget.h"
+#include "CuteNode.h"
 #include "NodeScene.h"
 
 

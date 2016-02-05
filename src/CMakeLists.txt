@@ -1,5 +1,5 @@
 set(SOURCES
-    CuteNodeWidget.cpp
+    CuteNode.cpp
     main.cpp
     MainWindow.cpp
     NodeScene.cpp
@@ -7,7 +7,7 @@ set(SOURCES
     )
 
 set(HEADERS
-    CuteNodeWidget.h
+    CuteNode.h
     MainWindow.h
     NodeScene.h
     NodeView.h

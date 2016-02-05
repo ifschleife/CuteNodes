@@ -1,4 +1,4 @@
-#include "CuteNodeWidget.h"
+#include "CuteNode.h"
 
 #include <QBrush>
 #include <QGraphicsRectItem>
