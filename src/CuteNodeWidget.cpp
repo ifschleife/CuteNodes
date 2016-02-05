@@ -1,40 +1,39 @@
 #include "CuteNodeWidget.h"
 
 #include <QBrush>
-#include <QGraphicsGridLayout>
-#include <QGraphicsProxyWidget>
-#include <QLabel>
+#include <QGraphicsRectItem>
 #include <QPainter>
 
 
-CuteNodeWidget::CuteNodeWidget(QGraphicsItem* parent, Qt::WindowFlags winFlags)
-    : QGraphicsWidget(parent, winFlags)
+CuteNode::CuteNode(QGraphicsItem* parent)
+    : QGraphicsItem(parent)
 {
     setFlags(flags() | ItemContainsChildrenInShape | ItemIsMovable | ItemIsSelectable);
 
-    QGraphicsGridLayout* layout = new QGraphicsGridLayout;
+    QBrush brush(Qt::green);
+    for (int i=0; i<5; ++i)
+    {
+        QRectF connectorRectIn{0.0, 50.0+i*30, 20.0, 20.0};
+        QGraphicsRectItem* in = new QGraphicsRectItem{connectorRectIn, this};
+        in->setBrush(QBrush{Qt::green});
 
-    QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget;
-    proxy->setWidget(new QLabel("in"));
-    layout->addItem(proxy, 0, 0);
-
-    QGraphicsProxyWidget* proxy2 = new QGraphicsProxyWidget;
-    proxy2->setWidget(new QLabel("out"));
-    layout->addItem(proxy2, 0, 1);
-
-    setLayout(layout);
-
-    // draw on top of everything
-    setZValue(-1.0);
+        QRectF connectorRectOut{130.0, 50.0+i*30, 20.0, 20.0};
+        QGraphicsRectItem* out = new QGraphicsRectItem{connectorRectOut, this};
+        out->setBrush(QBrush{Qt::red});
+    }
 }
 
-CuteNodeWidget::~CuteNodeWidget()
+CuteNode::~CuteNode()
 {
-
 }
 
 
-QVariant CuteNodeWidget::itemChange(GraphicsItemChange change, const QVariant& value)
+QRectF CuteNode::boundingRect() const
+{
+    return {0.0, 0.0, 150.0, 300.0};
+}
+
+QVariant CuteNode::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemSelectedHasChanged)
     {
@@ -42,12 +41,12 @@ QVariant CuteNodeWidget::itemChange(GraphicsItemChange change, const QVariant& v
         _pen.setColor(nodeSelected ? Qt::red : Qt::black);
     }
 
-    return QGraphicsWidget::itemChange(change, value);
+    return QGraphicsItem::itemChange(change, value);
 }
 
-void CuteNodeWidget::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void CuteNode::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    QBrush brush(Qt::darkGray);
+    const QBrush brush(Qt::darkGray);
     painter->setPen(_pen);
     painter->setBrush(brush);
     painter->drawRect(boundingRect());

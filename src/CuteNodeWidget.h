@@ -1,22 +1,21 @@
 #pragma once
 
-#include <QGraphicsWidget>
+#include <QGraphicsItem>
 #include <QPen>
 
 
-class CuteNodeWidget : public QGraphicsWidget
+class CuteNode : public QGraphicsItem
 {
-    Q_OBJECT
-
 public:
-    explicit CuteNodeWidget(QGraphicsItem* parent = nullptr, Qt::WindowFlags winFlags = 0);
-    ~CuteNodeWidget() override;
+    explicit CuteNode(QGraphicsItem* parent = nullptr);
+    ~CuteNode() override;
+
+    QRectF boundingRect() const override;
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
-    QPointF _mousePosOffset{0.0, 0.0};
-    QPen    _pen{Qt::black};
+    QPen _pen{Qt::black};
 };

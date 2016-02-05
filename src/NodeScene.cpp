@@ -99,8 +99,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     if (event->buttons() == Qt::LeftButton)
     {
         QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-        QGraphicsWidget* clickedWidget = clickedItem ? clickedItem->topLevelWidget() : nullptr;
-        bool nodeWasClicked = qgraphicsitem_cast<CuteNodeWidget*>(clickedWidget) != nullptr;
+        bool nodeWasClicked = qgraphicsitem_cast<CuteNode*>(clickedItem) != nullptr;
 
         if (nodeWasClicked)
         {
@@ -130,7 +129,7 @@ std::vector<QGraphicsItem*> NodeScene::getSelectedNodes() const
 
     auto lastNode = std::partition(items.begin(), items.end(), [](const auto& item)
     {
-        return qgraphicsitem_cast<CuteNodeWidget*>(item) != nullptr;
+        return qgraphicsitem_cast<CuteNode*>(item) != nullptr;
     });
     return {items.begin(), lastNode};
 }
