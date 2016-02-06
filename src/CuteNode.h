@@ -2,6 +2,7 @@
 
 #include <QGraphicsItem>
 #include <QPen>
+#include <QRectF>
 
 
 class CuteNode : public QGraphicsItem
@@ -17,5 +18,6 @@ private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
-    QPen _pen{Qt::black};
+    QRectF _paintRect{0.0, 0.0, 140.0, 300.0};
+    QPen   _pen{Qt::black};
 };
