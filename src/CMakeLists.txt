@@ -1,4 +1,5 @@
 set(SOURCES
+    Connector.cpp
     CuteNode.cpp
     main.cpp
     MainWindow.cpp
@@ -7,6 +8,7 @@ set(SOURCES
     )
 
 set(HEADERS
+    Connector.h
     CuteNode.h
     MainWindow.h
     NodeScene.h

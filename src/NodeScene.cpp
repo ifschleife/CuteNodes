@@ -99,9 +99,9 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     if (event->buttons() == Qt::LeftButton)
     {
         QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-        bool nodeWasClicked = qgraphicsitem_cast<CuteNode*>(clickedItem) != nullptr;
+        const int itemType = clickedItem ? clickedItem->type() : 0;
 
-        if (nodeWasClicked)
+        if (itemType == CuteNode::Type)
         {
             startDraggingSelectedNodes(event->scenePos());
         }

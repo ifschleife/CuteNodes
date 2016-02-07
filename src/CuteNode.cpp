@@ -1,5 +1,7 @@
 #include "CuteNode.h"
 
+#include "Connector.h"
+
 #include <QBrush>
 #include <QGraphicsRectItem>
 #include <QPainter>
@@ -12,13 +14,8 @@ CuteNode::CuteNode(QGraphicsItem* parent)
 
     for (int i=0; i<5; ++i)
     {
-        QRectF connectorRectIn{0.0, 50.0+i*30, 20.0, 15.0};
-        QGraphicsRectItem* in = new QGraphicsRectItem{connectorRectIn, this};
-        in->setBrush(QBrush{Qt::green});
-
-        QRectF connectorRectOut{130.0, 50.0+i*30, 20.0, 15.0};
-        QGraphicsRectItem* out = new QGraphicsRectItem{connectorRectOut, this};
-        out->setBrush(QBrush{Qt::red});
+        _inputConnectors.emplace_back(new Connector{this, {0.0, 50.0 + i*30.0}});
+        _outputConnectors.emplace_back(new Connector{this, {120.0, 50.0 + i*30.0}});
     }
 }
 
@@ -36,7 +33,7 @@ QVariant CuteNode::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemSelectedHasChanged)
     {
-        const bool nodeSelected = value.toBool() == true;
+        const bool nodeSelected = value.toBool();
         _pen.setColor(nodeSelected ? Qt::red : Qt::black);
     }
 
