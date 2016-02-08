@@ -1,5 +1,6 @@
 #include "NodeScene.h"
 
+#include "Connector.h"
 #include "CuteNode.h"
 
 #include <QGraphicsItem>
@@ -67,6 +68,35 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             }
         }
 
+        if (_connectionStartItem)
+        {
+            QLineF line = _connectionLine->line();
+            line.setP2(event->scenePos());
+            _connectionLine->setLine(line);
+
+            QGraphicsItem* prevEndItem = _connectionEndItem;
+            bool showingPreview = false;
+
+            QGraphicsItem* port = getTopLevelPortAtPos(event->scenePos());
+            if (port && port != _connectionStartItem)
+            {
+                // only show preview once
+                if (prevEndItem != port)
+                {
+                    qgraphicsitem_cast<Connector*>(port)->showConnectionPreview();
+                    _connectionEndItem = port;
+                }
+                showingPreview = true;
+            }
+
+            // only hide previously shown preview when there was one
+            if (prevEndItem && !showingPreview)
+            {
+                qgraphicsitem_cast<Connector*>(prevEndItem)->hideConnectionPreview();
+                _connectionEndItem = nullptr;
+            }
+        }
+
         event->accept();
         return;
     }
@@ -105,6 +135,11 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             startDraggingSelectedNodes(event->scenePos());
         }
+        else if (itemType == Connector::Type)
+        {
+            _connectionLine = addLine({event->scenePos(), event->scenePos()});
+            _connectionStartItem = clickedItem;
+        }
     }
 }
 
@@ -139,6 +174,17 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
+        if (_connectionStartItem)
+        {
+            // remove connection when it does not end in another port
+            QGraphicsItem* port = getTopLevelPortAtPos(event->scenePos());
+            if (!port || port == _connectionStartItem)
+            {
+                delete _connectionLine;
+            }
+            _connectionStartItem = nullptr;
+        }
+
         // reset z value to default
         for (const auto& node: _draggedNodes)
         {
@@ -148,4 +194,15 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
+}
+
+QGraphicsItem* NodeScene::getTopLevelPortAtPos(const QPointF& scenePos) const
+{
+    QList<QGraphicsItem*> itemsAtCursor = items(scenePos, Qt::IntersectsItemBoundingRect, Qt::DescendingOrder);
+    const auto iter = std::find_if(itemsAtCursor.begin(), itemsAtCursor.end(), [](const auto& item)
+    {
+        return item->type() == Connector::Type;
+    });
+
+    return iter != itemsAtCursor.end() ? *iter : nullptr;
 }

@@ -30,6 +30,18 @@ QRectF Connector::boundingRect() const
     return _paintRect.marginsAdded({1.0, 1.0, 1.0, 1.0});
 }
 
+void Connector::hideConnectionPreview()
+{
+    _brush.setColor(defaultColor);
+    update();
+}
+
+void Connector::showConnectionPreview()
+{
+    _brush.setColor(selectColor);
+    update();
+}
+
 void Connector::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     _brush.setColor(hoverColor);
@@ -51,11 +63,6 @@ QVariant Connector::itemChange(GraphicsItemChange change, const QVariant& value)
     }
 
     return QGraphicsItem::itemChange(change, value);
-}
-
-void Connector::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-    QGraphicsItem::mousePressEvent(event);
 }
 
 void Connector::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)

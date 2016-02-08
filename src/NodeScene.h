@@ -27,12 +27,18 @@ private:
     std::vector<QGraphicsItem*> getSelectedNodes() const;
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    QGraphicsItem* getTopLevelPortAtPos(const QPointF& scenePos) const;
 
 private:
-    typedef std::pair<QGraphicsItem*, QPointF> DraggedNode;
-
-    std::vector<DraggedNode> _draggedNodes;
     QSize                    _gridSize{20, 20};
     bool                     _gridSnapping{true};
     bool                     _nodeOverlap{false};
+
+    // temps
+    QGraphicsItem*           _connectionEndItem{nullptr};
+    QGraphicsLineItem*       _connectionLine{nullptr};
+    QGraphicsItem*           _connectionStartItem{nullptr};
+
+    typedef std::pair<QGraphicsItem*, QPointF> DraggedNode;
+    std::vector<DraggedNode> _draggedNodes;
 };

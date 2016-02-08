@@ -16,12 +16,14 @@ public:
     QRectF boundingRect() const override;
     int type() const override { return Type; }
 
+    void hideConnectionPreview();
+    void showConnectionPreview();
+
 private:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
