@@ -115,7 +115,7 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
 
     bool collision = std::any_of(potentialColliders.begin(), potentialColliders.end(), [&node](const auto& item)
     {
-        return item->topLevelItem() != node;
+        return item->type() == CuteNode::Type && item != node;
     });
 
     return !collision;
