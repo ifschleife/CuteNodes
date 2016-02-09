@@ -1,6 +1,6 @@
 #include "NodeScene.h"
 
-#include "Connector.h"
+#include "CuteDock.h"
 #include "CuteNode.h"
 
 #include <QGraphicsItem>
@@ -77,14 +77,14 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             QGraphicsItem* prevEndItem = _connectionEndItem;
             bool showingPreview = false;
 
-            QGraphicsItem* port = getTopLevelPortAtPos(event->scenePos());
-            if (port && port != _connectionStartItem)
+            QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
+            if (dock && dock != _connectionStartItem)
             {
                 // only show preview once
-                if (prevEndItem != port)
+                if (prevEndItem != dock)
                 {
-                    qgraphicsitem_cast<Connector*>(port)->showConnectionPreview();
-                    _connectionEndItem = port;
+                    qgraphicsitem_cast<CuteDock*>(dock)->showConnectionPreview();
+                    _connectionEndItem = dock;
                 }
                 showingPreview = true;
             }
@@ -92,7 +92,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             // only hide previously shown preview when there was one
             if (prevEndItem && !showingPreview)
             {
-                qgraphicsitem_cast<Connector*>(prevEndItem)->hideConnectionPreview();
+                qgraphicsitem_cast<CuteDock*>(prevEndItem)->hideConnectionPreview();
                 _connectionEndItem = nullptr;
             }
         }
@@ -135,7 +135,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             startDraggingSelectedNodes(event->scenePos());
         }
-        else if (itemType == Connector::Type)
+        else if (itemType == CuteDock::Type)
         {
             _connectionLine = addLine({event->scenePos(), event->scenePos()});
             _connectionStartItem = clickedItem;
@@ -176,9 +176,9 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_connectionStartItem)
         {
-            // remove connection when it does not end in another port
-            QGraphicsItem* port = getTopLevelPortAtPos(event->scenePos());
-            if (!port || port == _connectionStartItem)
+            // remove connection when it does not end in another dock
+            QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
+            if (!dock || dock == _connectionStartItem)
             {
                 delete _connectionLine;
             }
@@ -196,12 +196,12 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-QGraphicsItem* NodeScene::getTopLevelPortAtPos(const QPointF& scenePos) const
+QGraphicsItem* NodeScene::getTopLevelDockAtPos(const QPointF& scenePos) const
 {
     QList<QGraphicsItem*> itemsAtCursor = items(scenePos, Qt::IntersectsItemBoundingRect, Qt::DescendingOrder);
     const auto iter = std::find_if(itemsAtCursor.begin(), itemsAtCursor.end(), [](const auto& item)
     {
-        return item->type() == Connector::Type;
+        return item->type() == CuteDock::Type;
     });
 
     return iter != itemsAtCursor.end() ? *iter : nullptr;

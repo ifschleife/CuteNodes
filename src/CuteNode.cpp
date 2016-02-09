@@ -1,6 +1,6 @@
 #include "CuteNode.h"
 
-#include "Connector.h"
+#include "CuteDock.h"
 
 #include <QBrush>
 #include <QGraphicsRectItem>
@@ -14,8 +14,8 @@ CuteNode::CuteNode(QGraphicsItem* parent)
 
     for (int i=0; i<5; ++i)
     {
-        _inputConnectors.emplace_back(new Connector{this, {0.0, 50.0 + i*30.0}});
-        _outputConnectors.emplace_back(new Connector{this, {120.0, 50.0 + i*30.0}});
+        _inputConnectors.emplace_back(new CuteDock{this, {0.0, 50.0 + i*30.0}});
+        _outputConnectors.emplace_back(new CuteDock{this, {120.0, 50.0 + i*30.0}});
     }
 }
 

@@ -5,7 +5,7 @@
 #include <QRectF>
 
 
-class Connector;
+class CuteDock;
 
 
 class CuteNode : public QGraphicsItem
@@ -24,8 +24,8 @@ private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
-    std::vector<Connector*> _inputConnectors;
-    std::vector<Connector*> _outputConnectors;
+    std::vector<CuteDock*> _inputConnectors;
+    std::vector<CuteDock*> _outputConnectors;
 
     QRectF _paintRect{0.0, 0.0, 140.0, 300.0};
     QPen   _pen{Qt::black};

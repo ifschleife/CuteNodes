@@ -1,4 +1,4 @@
-#include "Connector.h"
+#include "CuteDock.h"
 
 #include <QPainter>
 
@@ -11,7 +11,7 @@ namespace
 }
 
 
-Connector::Connector(QGraphicsItem* parent, const QPointF& pos)
+CuteDock::CuteDock(QGraphicsItem* parent, const QPointF& pos)
     : QGraphicsItem(parent)
     , _brush{defaultColor}
 {
@@ -20,41 +20,41 @@ Connector::Connector(QGraphicsItem* parent, const QPointF& pos)
     setPos(pos);
 }
 
-Connector::~Connector()
+CuteDock::~CuteDock()
 {
 }
 
 
-QRectF Connector::boundingRect() const
+QRectF CuteDock::boundingRect() const
 {
     return _paintRect.marginsAdded({1.0, 1.0, 1.0, 1.0});
 }
 
-void Connector::hideConnectionPreview()
+void CuteDock::hideConnectionPreview()
 {
     _brush.setColor(defaultColor);
     update();
 }
 
-void Connector::showConnectionPreview()
+void CuteDock::showConnectionPreview()
 {
     _brush.setColor(selectColor);
     update();
 }
 
-void Connector::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+void CuteDock::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     _brush.setColor(hoverColor);
     QGraphicsItem::hoverEnterEvent(event);
 }
 
-void Connector::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+void CuteDock::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     _brush.setColor(defaultColor);
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
-QVariant Connector::itemChange(GraphicsItemChange change, const QVariant& value)
+QVariant CuteDock::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemSelectedHasChanged)
     {
@@ -65,7 +65,7 @@ QVariant Connector::itemChange(GraphicsItemChange change, const QVariant& value)
     return QGraphicsItem::itemChange(change, value);
 }
 
-void Connector::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void CuteDock::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     painter->setPen({_brush.color()});
     painter->setBrush(_brush);

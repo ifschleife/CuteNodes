@@ -5,11 +5,11 @@
 #include <QRectF>
 
 
-class Connector : public QGraphicsItem
+class CuteDock : public QGraphicsItem
 {
 public:
-    explicit Connector(QGraphicsItem* parent, const QPointF& pos);
-    ~Connector() override;
+    explicit CuteDock(QGraphicsItem* parent, const QPointF& pos);
+    ~CuteDock() override;
 
     enum { Type = UserType + 2 };
 
