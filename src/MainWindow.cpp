@@ -12,15 +12,15 @@ MainWindow::MainWindow(QWidget* parent)
 {
     _ui->setupUi(this);
 
-    for (int i=0; i<5; ++i)
+    for (int i=3; i<8; ++i)
     {
         CuteNode* node = new CuteNode;
-        node->setPos(i*300.0, 300.0);
+        node->setPos(i*300.0, 1000.0);
         _scene->addItem(node);
     }
 
     _ui->nodeView->setScene(_scene.get());
-    _ui->nodeView->centerOn(0.0, 0.0);
+    _ui->nodeView->centerOn(1000.0, 1000.0);
 
     connect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
     connect(_ui->actionToggleOverlap, &QAction::triggered, _scene.get(), &NodeScene::toggleNodeOverlap);
