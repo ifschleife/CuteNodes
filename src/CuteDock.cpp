@@ -30,6 +30,11 @@ QRectF CuteDock::boundingRect() const
     return _paintRect.marginsAdded({1.0, 1.0, 1.0, 1.0});
 }
 
+QPointF CuteDock::getConnectionMagnet() const
+{
+    return mapToScene(_paintRect.center());
+}
+
 void CuteDock::hideConnectionPreview()
 {
     _brush.setColor(defaultColor);

@@ -4,6 +4,9 @@
 #include <vector>
 
 
+class CuteConnection;
+
+
 // Adapted from http://stackoverflow.com/a/15054118/578536
 
 class NodeScene : public QGraphicsScene
@@ -35,8 +38,8 @@ private:
     bool                     _nodeOverlap{false};
 
     // temps
+    CuteConnection*          _connection{nullptr};
     QGraphicsItem*           _connectionEndItem{nullptr};
-    QGraphicsLineItem*       _connectionLine{nullptr};
     QGraphicsItem*           _connectionStartItem{nullptr};
 
     typedef std::pair<QGraphicsItem*, QPointF> DraggedNode;

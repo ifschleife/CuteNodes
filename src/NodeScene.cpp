@@ -1,5 +1,6 @@
 #include "NodeScene.h"
 
+#include "CuteConnection.h"
 #include "CuteDock.h"
 #include "CuteNode.h"
 
@@ -70,9 +71,9 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
         if (_connectionStartItem)
         {
-            QLineF line = _connectionLine->line();
+            QLineF line = _connection->line();
             line.setP2(event->scenePos());
-            _connectionLine->setLine(line);
+            _connection->setLine(line);
 
             QGraphicsItem* prevEndItem = _connectionEndItem;
             bool showingPreview = false;
@@ -137,7 +138,10 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         else if (itemType == CuteDock::Type)
         {
-            _connectionLine = addLine({event->scenePos(), event->scenePos()});
+            CuteDock* startDock = qgraphicsitem_cast<CuteDock*>(clickedItem);
+            _connection = new CuteConnection{{event->scenePos(), event->scenePos()}, startDock};
+            addItem(_connection);
+
             _connectionStartItem = clickedItem;
         }
     }
@@ -176,13 +180,20 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_connectionStartItem)
         {
-            // remove connection when it does not end in another dock
             QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
-            if (!dock || dock == _connectionStartItem)
+            if (dock && dock != _connectionStartItem)
             {
-                delete _connectionLine;
+                // connection is valid now
+                _connection->setEndDock(qgraphicsitem_cast<CuteDock*>(dock));
             }
+            else
+            {
+                // remove connection when it does not end in another dock
+                delete _connection;
+            }
+
             _connectionStartItem = nullptr;
+            _connection = nullptr;
         }
 
         // reset z value to default

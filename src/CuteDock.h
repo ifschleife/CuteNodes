@@ -16,6 +16,8 @@ public:
     QRectF boundingRect() const override;
     int type() const override { return Type; }
 
+    QPointF getConnectionMagnet() const;
+
     void hideConnectionPreview();
     void showConnectionPreview();
 

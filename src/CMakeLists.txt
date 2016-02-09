@@ -1,4 +1,5 @@
 set(SOURCES
+    CuteConnection.cpp
     CuteDock.cpp
     CuteNode.cpp
     main.cpp
@@ -8,6 +9,7 @@ set(SOURCES
     )
 
 set(HEADERS
+    CuteConnection.h
     CuteDock.h
     CuteNode.h
     MainWindow.h
