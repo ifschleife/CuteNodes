@@ -69,7 +69,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             }
         }
 
-        if (_connectionStartItem)
+        if (_connection)
         {
             QLineF line = _connection->line();
             line.setP2(event->scenePos());
@@ -79,7 +79,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             bool showingPreview = false;
 
             QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
-            if (dock && dock != _connectionStartItem)
+            if (dock && dock != _connection->getStartItem())
             {
                 // only show preview once
                 if (prevEndItem != dock)
@@ -138,11 +138,8 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         else if (itemType == CuteDock::Type)
         {
-            CuteDock* startDock = qgraphicsitem_cast<CuteDock*>(clickedItem);
-            _connection = new CuteConnection{{event->scenePos(), event->scenePos()}, startDock};
+            _connection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
             addItem(_connection);
-
-            _connectionStartItem = clickedItem;
         }
     }
 }
@@ -178,13 +175,13 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
-        if (_connectionStartItem)
+        if (_connection)
         {
             QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
-            if (dock && dock != _connectionStartItem)
+            if (dock && dock != _connection->getStartItem())
             {
                 // connection is valid now
-                _connection->setEndDock(qgraphicsitem_cast<CuteDock*>(dock));
+                _connection->setEndItem(dock);
             }
             else
             {
@@ -192,7 +189,6 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 delete _connection;
             }
 
-            _connectionStartItem = nullptr;
             _connection = nullptr;
         }
 

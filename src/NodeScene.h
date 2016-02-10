@@ -40,7 +40,6 @@ private:
     // temps
     CuteConnection*          _connection{nullptr};
     QGraphicsItem*           _connectionEndItem{nullptr};
-    QGraphicsItem*           _connectionStartItem{nullptr};
 
     typedef std::pair<QGraphicsItem*, QPointF> DraggedNode;
     std::vector<DraggedNode> _draggedNodes;
