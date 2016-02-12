@@ -150,7 +150,8 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         else if (itemType == CuteDock::Type)
         {
-            _drawnConnection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
+            auto dock = qgraphicsitem_cast<CuteDock*>(clickedItem);
+            _drawnConnection = new CuteConnection{{dock->getConnectionMagnet(), event->scenePos()}, dock};
             addItem(_drawnConnection);
         }
     }
