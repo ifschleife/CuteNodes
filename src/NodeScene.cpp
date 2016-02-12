@@ -54,48 +54,13 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
-        for (const auto& draggedNode: _draggedNodes)
+        if (_draggedNodes.size() > 0)
         {
-            QPointF newNodePos = event->scenePos() - draggedNode.second;
-            if (_gridSnapping)
-            {
-                newNodePos.setX((round(newNodePos.x() / _gridSize.width())) * _gridSize.width());
-                newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
-            }
-
-            if (_nodeOverlap || draggedNodePositionIsValid(draggedNode.first, newNodePos))
-            {
-                draggedNode.first->setPos(newNodePos);
-            }
+            handleNodeDragging(event->scenePos());
         }
-
-        if (_drawnConnection)
+        else if (_drawnConnection)
         {
-            QLineF line = _drawnConnection->line();
-            line.setP2(event->scenePos());
-            _drawnConnection->setLine(line);
-
-            QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
-            bool showingPreview = false;
-
-            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
-            if (dock && dock != _drawnConnection->getStartItem())
-            {
-                // only show preview once
-                if (prevEndItem != dock)
-                {
-                    qgraphicsitem_cast<CuteDock*>(dock)->showConnectionPreview();
-                    _drawnConnection->setEndItem(dock);
-                }
-                showingPreview = true;
-            }
-
-            // only hide previously shown preview when there was one
-            if (prevEndItem && !showingPreview)
-            {
-                qgraphicsitem_cast<CuteDock*>(prevEndItem)->hideConnectionPreview();
-                _drawnConnection->setEndItem(nullptr);
-            }
+            handleConnectionDrawing(event->scenePos());
         }
 
         event->accept();
@@ -103,6 +68,24 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 
     QGraphicsScene::mouseMoveEvent(event);
+}
+
+void NodeScene::handleNodeDragging(const QPointF& mousePos)
+{
+    for (const auto& draggedNode: _draggedNodes)
+    {
+        QPointF newNodePos = mousePos - draggedNode.second;
+        if (_gridSnapping)
+        {
+            newNodePos.setX((round(newNodePos.x() / _gridSize.width())) * _gridSize.width());
+            newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
+        }
+
+        if (_nodeOverlap || draggedNodePositionIsValid(draggedNode.first, newNodePos))
+        {
+            draggedNode.first->setPos(newNodePos);
+        }
+    }
 }
 
 bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const
@@ -120,6 +103,35 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
     });
 
     return !collision;
+}
+
+void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
+{
+    QLineF line = _drawnConnection->line();
+    line.setP2(mousePos);
+    _drawnConnection->setLine(line);
+
+    QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
+    bool showingPreview = false;
+
+    QGraphicsItem* dock = getTopLevelItemAtPos(mousePos, CuteDock::Type);
+    if (dock && dock != _drawnConnection->getStartItem())
+    {
+        // only show preview once
+        if (prevEndItem != dock)
+        {
+            qgraphicsitem_cast<CuteDock*>(dock)->showConnectionPreview();
+            _drawnConnection->setEndItem(dock);
+        }
+        showingPreview = true;
+    }
+
+    // only hide previously shown preview when there was one
+    if (prevEndItem && !showingPreview)
+    {
+        qgraphicsitem_cast<CuteDock*>(prevEndItem)->hideConnectionPreview();
+        _drawnConnection->setEndItem(nullptr);
+    }
 }
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)

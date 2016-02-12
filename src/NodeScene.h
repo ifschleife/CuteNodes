@@ -23,7 +23,9 @@ private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void handleNodeDragging(const QPointF& mousePos);
     bool draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const;
+    void handleConnectionDrawing(const QPointF& mousePos);
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void startDraggingSelectedNodes(const QPointF& dragStartPos);
