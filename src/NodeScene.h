@@ -38,7 +38,7 @@ private:
     bool                     _nodeOverlap{false};
 
     // temps
-    CuteConnection*          _draggedConnection{nullptr};
+    CuteConnection*          _drawnConnection{nullptr};
 
     typedef std::pair<QGraphicsItem*, QPointF> DraggedNode;
     std::vector<DraggedNode> _draggedNodes;

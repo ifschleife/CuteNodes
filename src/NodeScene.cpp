@@ -69,23 +69,23 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             }
         }
 
-        if (_draggedConnection)
+        if (_drawnConnection)
         {
-            QLineF line = _draggedConnection->line();
+            QLineF line = _drawnConnection->line();
             line.setP2(event->scenePos());
-            _draggedConnection->setLine(line);
+            _drawnConnection->setLine(line);
 
-            QGraphicsItem* prevEndItem = _draggedConnection->getEndItem();
+            QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
             bool showingPreview = false;
 
             QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
-            if (dock && dock != _draggedConnection->getStartItem())
+            if (dock && dock != _drawnConnection->getStartItem())
             {
                 // only show preview once
                 if (prevEndItem != dock)
                 {
                     qgraphicsitem_cast<CuteDock*>(dock)->showConnectionPreview();
-                    _draggedConnection->setEndItem(dock);
+                    _drawnConnection->setEndItem(dock);
                 }
                 showingPreview = true;
             }
@@ -94,7 +94,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             if (prevEndItem && !showingPreview)
             {
                 qgraphicsitem_cast<CuteDock*>(prevEndItem)->hideConnectionPreview();
-                _draggedConnection->setEndItem(nullptr);
+                _drawnConnection->setEndItem(nullptr);
             }
         }
 
@@ -138,8 +138,8 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         else if (itemType == CuteDock::Type)
         {
-            _draggedConnection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
-            addItem(_draggedConnection);
+            _drawnConnection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
+            addItem(_drawnConnection);
         }
     }
 }
@@ -175,20 +175,20 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // for some reason buttons() will show Qt::NoButton, so we call button() instead
     if (event->button() == Qt::LeftButton)
     {
-        if (_draggedConnection)
+        if (_drawnConnection)
         {
             QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
-            if (dock && dock != _draggedConnection->getStartItem())
+            if (dock && dock != _drawnConnection->getStartItem())
             {
-                _draggedConnection->setEndItem(dock);
+                _drawnConnection->setEndItem(dock);
             }
             else
             {
                 // remove connection when it does not end in another dock
-                delete _draggedConnection;
+                delete _drawnConnection;
             }
 
-            _draggedConnection = nullptr;
+            _drawnConnection = nullptr;
         }
 
         // reset z value to default
