@@ -22,6 +22,11 @@ QGraphicsItem* CuteConnection::getStartItem() const
     return _connectedItems.first;
 }
 
+QGraphicsItem* CuteConnection::getEndItem() const
+{
+    return _connectedItems.second;
+}
+
 void CuteConnection::setEndItem(QGraphicsItem* item)
 {
     _connectedItems.second = item;

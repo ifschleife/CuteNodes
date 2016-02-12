@@ -13,6 +13,7 @@ public:
     int type() const override { return Type; }
 
     QGraphicsItem* getStartItem() const;
+    QGraphicsItem* getEndItem() const;
     void setEndItem(QGraphicsItem* item);
 
 private:
