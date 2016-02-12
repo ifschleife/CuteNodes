@@ -78,7 +78,7 @@ void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             QGraphicsItem* prevEndItem = _connectionEndItem;
             bool showingPreview = false;
 
-            QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
+            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
             if (dock && dock != _connection->getStartItem())
             {
                 // only show preview once
@@ -177,7 +177,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_connection)
         {
-            QGraphicsItem* dock = getTopLevelDockAtPos(event->scenePos());
+            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
             if (dock && dock != _connection->getStartItem())
             {
                 // connection is valid now
@@ -203,13 +203,13 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-QGraphicsItem* NodeScene::getTopLevelDockAtPos(const QPointF& scenePos) const
+QGraphicsItem* NodeScene::getTopLevelItemAtPos(const QPointF& scenePos, int itemType) const
 {
-    QList<QGraphicsItem*> itemsAtCursor = items(scenePos, Qt::IntersectsItemBoundingRect, Qt::DescendingOrder);
-    const auto iter = std::find_if(itemsAtCursor.begin(), itemsAtCursor.end(), [](const auto& item)
+    QList<QGraphicsItem*> itemsAtPos = items(scenePos, Qt::IntersectsItemBoundingRect, Qt::DescendingOrder);
+    const auto iter = std::find_if(itemsAtPos.begin(), itemsAtPos.end(), [&itemType](const auto& item)
     {
-        return item->type() == CuteDock::Type;
+        return item->type() == itemType;
     });
 
-    return iter != itemsAtCursor.end() ? *iter : nullptr;
+    return iter != itemsAtPos.end() ? *iter : nullptr;
 }

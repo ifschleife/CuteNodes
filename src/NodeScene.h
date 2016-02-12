@@ -30,7 +30,7 @@ private:
     std::vector<QGraphicsItem*> getSelectedNodes() const;
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
-    QGraphicsItem* getTopLevelDockAtPos(const QPointF& scenePos) const;
+    QGraphicsItem* getTopLevelItemAtPos(const QPointF& scenePos, int itemType) const;
 
 private:
     QSize                    _gridSize{20, 20};
