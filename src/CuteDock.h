@@ -32,3 +32,25 @@ private:
     QRectF _paintRect{0.0, 0.0, 20.0, 10.0};
     QBrush _brush;
 };
+
+
+class CuteInputDock : public CuteDock
+{
+public:
+    explicit CuteInputDock(QGraphicsItem* parent, const QPointF& pos) : CuteDock(parent, pos) {}
+    ~CuteInputDock() override {}
+
+    enum { Type = UserType + 3 };
+    int type() const override { return Type; }
+};
+
+
+class CuteOutputDock : public CuteDock
+{
+public:
+    explicit CuteOutputDock(QGraphicsItem* parent, const QPointF& pos) : CuteDock(parent, pos) {}
+    ~CuteOutputDock() override {}
+
+    enum { Type = UserType + 4 };
+    int type() const override { return Type; }
+};

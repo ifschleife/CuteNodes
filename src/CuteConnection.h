@@ -9,7 +9,7 @@ public:
     explicit CuteConnection(const QLineF& line, QGraphicsItem* startItem);
     ~CuteConnection() override;
 
-    enum { Type = UserType + 3 };
+    enum { Type = UserType + 5 };
     int type() const override { return Type; }
 
     QGraphicsItem* getStartItem() const;
@@ -18,7 +18,7 @@ public:
 
 private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-    bool connectionIsValid() const { return _connectedItems.first && _connectedItems.second; }
+    void snapLineToItems();
 
 private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;

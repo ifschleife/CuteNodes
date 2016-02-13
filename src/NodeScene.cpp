@@ -114,13 +114,13 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
     QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
     bool showingPreview = false;
 
-    QGraphicsItem* dock = getTopLevelItemAtPos(mousePos, CuteDock::Type);
+    QGraphicsItem* dock = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
     if (dock && dock != _drawnConnection->getStartItem())
     {
         // only show preview once
         if (prevEndItem != dock)
         {
-            qgraphicsitem_cast<CuteDock*>(dock)->showConnectionPreview();
+            qgraphicsitem_cast<CuteInputDock*>(dock)->showConnectionPreview();
             _drawnConnection->setEndItem(dock);
         }
         showingPreview = true;
@@ -129,7 +129,7 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
     // only hide previously shown preview when there was one
     if (prevEndItem && !showingPreview)
     {
-        qgraphicsitem_cast<CuteDock*>(prevEndItem)->hideConnectionPreview();
+        qgraphicsitem_cast<CuteInputDock*>(prevEndItem)->hideConnectionPreview();
         _drawnConnection->setEndItem(nullptr);
     }
 }
@@ -148,10 +148,9 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             startDraggingSelectedNodes(event->scenePos());
         }
-        else if (itemType == CuteDock::Type)
+        else if (itemType == CuteOutputDock::Type)
         {
-            auto dock = qgraphicsitem_cast<CuteDock*>(clickedItem);
-            _drawnConnection = new CuteConnection{{dock->getConnectionMagnet(), event->scenePos()}, dock};
+            _drawnConnection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
             addItem(_drawnConnection);
         }
     }
@@ -190,7 +189,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_drawnConnection)
         {
-            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
+            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteInputDock::Type);
             if (dock && dock != _drawnConnection->getStartItem())
             {
                 _drawnConnection->setEndItem(dock);

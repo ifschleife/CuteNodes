@@ -36,15 +36,22 @@ void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, Q
 {
     painter->setPen(pen());
 
-    if (connectionIsValid())
-    {
-        auto start = qgraphicsitem_cast<CuteDock*>(_connectedItems.first);
-        auto end   = qgraphicsitem_cast<CuteDock*>(_connectedItems.second);
-        const QPointF p1 = start ? start->getConnectionMagnet() : line().p1();
-        const QPointF p2 = end ? end->getConnectionMagnet() : line().p2();
-
-        setLine({p1, p2});
-    }
-
+    snapLineToItems();
     painter->drawLine(line());
+}
+
+void CuteConnection::snapLineToItems()
+{
+    QPointF p1 = line().p1();
+    QPointF p2 = line().p2();
+
+    const auto startItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
+    if (startItem)
+        p1 = startItem->getConnectionMagnet();
+
+    const auto endItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
+    if (endItem)
+        p2 = endItem->getConnectionMagnet();
+
+    setLine({p1, p2});
 }
