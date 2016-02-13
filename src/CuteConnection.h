@@ -1,12 +1,12 @@
 #pragma once
 
-#include <QGraphicsLineItem>
+#include <QGraphicsPathItem>
 
 
-class CuteConnection : public QGraphicsLineItem
+class CuteConnection : public QGraphicsPathItem
 {
 public:
-    explicit CuteConnection(const QLineF& line, QGraphicsItem* startItem);
+    explicit CuteConnection(QGraphicsItem* startItem);
     ~CuteConnection() override;
 
     enum { Type = UserType + 5 };
@@ -15,11 +15,15 @@ public:
     QGraphicsItem* getStartItem() const;
     QGraphicsItem* getEndItem() const;
     void setEndItem(QGraphicsItem* item);
+    void updateEndPoint(const QPointF& endPoint);
 
 private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-    void snapLineToItems();
+    void snapEndPointsToItems();
+    void calculateSpline();
 
 private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;
+    QPointF _endPoint{0.0, 0.0};
+    QPointF _startPoint{0.0, 0.0};
 };

@@ -107,9 +107,7 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
 
 void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
 {
-    QLineF line = _drawnConnection->line();
-    line.setP2(mousePos);
-    _drawnConnection->setLine(line);
+    _drawnConnection->updateEndPoint(mousePos);
 
     QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
     bool showingPreview = false;
@@ -150,7 +148,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         else if (itemType == CuteOutputDock::Type)
         {
-            _drawnConnection = new CuteConnection{{event->scenePos(), event->scenePos()}, clickedItem};
+            _drawnConnection = new CuteConnection{clickedItem};
             addItem(_drawnConnection);
         }
     }
