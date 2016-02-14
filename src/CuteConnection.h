@@ -18,12 +18,18 @@ public:
     void updateEndPoint(const QPointF& endPoint);
 
 private:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void snapEndPointsToItems();
     void calculateSpline();
 
 private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;
+
+    // temps
     QPointF _endPoint;
     QPointF _startPoint;
 };

@@ -5,13 +5,23 @@
 #include <QPainter>
 
 
+namespace
+{
+    const QPen defaultPen {Qt::black, 2};
+    const QPen hoverPen   {Qt::blue,  4};
+    const QPen selectPen  {Qt::red,   2};
+}
+
+
 CuteConnection::CuteConnection(QGraphicsItem* startItem)
     : QGraphicsPathItem{QPainterPath{startItem->scenePos()}}
     , _connectedItems{startItem, nullptr}
     , _endPoint{startItem->scenePos()}
     , _startPoint{startItem->scenePos()}
 {
-    setPen(QPen(Qt::black, 2));
+    setAcceptHoverEvents(true);
+    setFlags(flags() | ItemIsSelectable);
+    setPen(defaultPen);
 
     // this is needed so that path is valid, otherwise paint will never be called
     calculateSpline();
@@ -43,6 +53,40 @@ void CuteConnection::updateEndPoint(const QPointF& endPoint)
 
     update();
 }
+
+
+void CuteConnection::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+    if (!isSelected())
+        setPen(hoverPen);
+    setZValue(1.0);
+
+    QGraphicsPathItem::hoverEnterEvent(event);
+}
+
+void CuteConnection::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+    if (!isSelected())
+    {
+        setZValue(-2.0);
+        setPen(defaultPen);
+    }
+
+    QGraphicsPathItem::hoverLeaveEvent(event);
+}
+
+QVariant CuteConnection::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemSelectedHasChanged)
+    {
+        const bool selected = value.toBool() == true;
+        setPen(selected ? selectPen : defaultPen);
+        setZValue(selected ? 1.0 : -2.0);
+    }
+
+    return QGraphicsPathItem::itemChange(change, value);
+}
+
 
 void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
