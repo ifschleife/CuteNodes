@@ -193,6 +193,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (dock && dock != _drawnConnection->getStartItem())
             {
                 _drawnConnection->setEndItem(dock);
+                _drawnConnection->setZValue(-2.0);
             }
             else
             {
