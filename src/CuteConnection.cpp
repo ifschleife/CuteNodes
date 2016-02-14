@@ -6,10 +6,15 @@
 
 
 CuteConnection::CuteConnection(QGraphicsItem* startItem)
-    : QGraphicsPathItem{QPainterPath{startItem->pos()}}
+    : QGraphicsPathItem{QPainterPath{startItem->scenePos()}}
     , _connectedItems{startItem, nullptr}
+    , _endPoint{startItem->scenePos()}
+    , _startPoint{startItem->scenePos()}
 {
     setPen(QPen(Qt::black, 2));
+
+    // this is needed so that path is valid, otherwise paint will never be called
+    calculateSpline();
 }
 
 CuteConnection::~CuteConnection()
@@ -36,10 +41,7 @@ void CuteConnection::updateEndPoint(const QPointF& endPoint)
 {
     _endPoint = endPoint;
 
-    // we need to close the path to trigger a paint event, even calling update won't work
-    QPainterPath temp(_startPoint);
-    temp.lineTo(_endPoint); // we just set it to a line to not waste too many cycles
-    setPath(temp);
+    update();
 }
 
 void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
@@ -65,7 +67,8 @@ void CuteConnection::snapEndPointsToItems()
 
 void CuteConnection::calculateSpline()
 {
-    const QPointF center = path().pointAtPercent(0.5);
+    // initially the path will be empty, to not get a glitch on the first paint we use the startPoint as center
+    const QPointF center = path().isEmpty() ? _startPoint : path().pointAtPercent(0.5);
     const QPointF c1 = {center.x(), _startPoint.y()};
     const QPointF c2 = {center.x(), _endPoint.y()};
 

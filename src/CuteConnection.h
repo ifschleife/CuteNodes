@@ -24,6 +24,6 @@ private:
 
 private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;
-    QPointF _endPoint{0.0, 0.0};
-    QPointF _startPoint{0.0, 0.0};
+    QPointF _endPoint;
+    QPointF _startPoint;
 };

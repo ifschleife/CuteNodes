@@ -149,6 +149,8 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         else if (itemType == CuteOutputDock::Type)
         {
             _drawnConnection = new CuteConnection{clickedItem};
+            // this ensures that the connection's spline is valid
+            _drawnConnection->updateEndPoint(event->scenePos());
             addItem(_drawnConnection);
         }
     }
