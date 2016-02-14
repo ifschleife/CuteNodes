@@ -49,13 +49,17 @@ void CuteDock::showConnectionPreview()
 
 void CuteDock::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
-    _brush.setColor(hoverColor);
+    if (!isSelected())
+        _brush.setColor(hoverColor);
+
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void CuteDock::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
-    _brush.setColor(defaultColor);
+    if (!isSelected())
+        _brush.setColor(defaultColor);
+
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
