@@ -175,6 +175,9 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             auto connection = dock->getConnection();
             if (connection)
             {
+                dock->setConnection(nullptr); // remove connection from dock
+
+                // set connection to invalid (drawing) state
                 _drawnConnection = connection;
                 _drawnConnection->setEndItem(nullptr);
             }
