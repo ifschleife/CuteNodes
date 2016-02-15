@@ -29,24 +29,27 @@ NodeScene::~NodeScene()
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    qreal left = int(rect.left()) - (int(rect.left()) % _gridSize.width());
-    qreal top = int(rect.top()) - (int(rect.top()) % _gridSize.height());
+    const QRectF backgroundRect = sceneRect() & rect;
+    const qreal left = int(backgroundRect.left()) - (int(backgroundRect.left()) % _gridSize.width());
+    const qreal top = int(backgroundRect.top()) - (int(backgroundRect.top()) % _gridSize.height());
 
     QVarLengthArray<QLineF, 100> lines;
 
-    for (qreal x = left; x < rect.right(); x += _gridSize.width())
+    for (qreal x = left; x < backgroundRect.right(); x += _gridSize.width())
     {
-        lines.append(QLineF(x, rect.top(), x, rect.bottom()));
+        lines.append(QLineF(x, backgroundRect.top(), x, backgroundRect.bottom()));
     }
 
-    for (qreal y = top; y < rect.bottom(); y += _gridSize.height())
+    for (qreal y = top; y < backgroundRect.bottom(); y += _gridSize.height())
     {
-        lines.append(QLineF(rect.left(), y, rect.right(), y));
+        lines.append(QLineF(backgroundRect.left(), y, backgroundRect.right(), y));
     }
 
-    QPen pen(Qt::lightGray);
-    painter->setPen(pen);
+    painter->setPen(Qt::lightGray);
     painter->drawLines(lines.data(), lines.size());
+
+    painter->setPen({Qt::darkGray, 3});
+    painter->drawRect(sceneRect());
 }
 
 void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -80,11 +83,23 @@ void NodeScene::handleNodeDragging(const QPointF& mousePos)
             newNodePos.setY((round(newNodePos.y() / _gridSize.height())) * _gridSize.height());
         }
 
-        if (_nodeOverlap || draggedNodePositionIsValid(draggedNode.first, newNodePos))
+        if (draggedNodePositionInSceneRect(draggedNode.first, newNodePos))
         {
-            draggedNode.first->setPos(newNodePos);
+            if (_nodeOverlap || draggedNodePositionIsValid(draggedNode.first, newNodePos))
+            {
+                draggedNode.first->setPos(newNodePos);
+            }
         }
     }
+}
+
+bool NodeScene::draggedNodePositionInSceneRect(const QGraphicsItem* node, const QPointF& nodePos) const
+{
+    // this is the bounding rect the item will have when it has been moved
+    QRectF newBoundingRect = node->sceneBoundingRect();
+    newBoundingRect.moveTo(nodePos);
+
+    return sceneRect().contains(newBoundingRect);
 }
 
 bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const
@@ -94,7 +109,7 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
     newBoundingRect.moveTo(nodePos);
 
     // check if there are other items in this new area
-    QList<QGraphicsItem*> potentialColliders = items(newBoundingRect, Qt::IntersectsItemBoundingRect);
+    const QList<QGraphicsItem*> potentialColliders = items(newBoundingRect, Qt::IntersectsItemBoundingRect);
 
     bool collision = std::any_of(potentialColliders.begin(), potentialColliders.end(), [&node](const auto& item)
     {

@@ -24,6 +24,7 @@ private:
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void handleNodeDragging(const QPointF& mousePos);
+    bool draggedNodePositionInSceneRect(const QGraphicsItem* node, const QPointF& nodePos) const;
     bool draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const;
     void handleConnectionDrawing(const QPointF& mousePos);
 
