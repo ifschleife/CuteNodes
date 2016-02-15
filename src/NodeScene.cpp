@@ -123,11 +123,13 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
 {
     _drawnConnection->updateEndPoint(mousePos);
 
-    QGraphicsItem* prevEndItem = _drawnConnection->getEndItem();
+    auto prevEndItem = _drawnConnection->getEndItem();
     bool showingPreview = false;
 
-    QGraphicsItem* dock = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
-    if (dock && dock != _drawnConnection->getStartItem())
+    auto item = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
+    auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
+
+    if (dock && !dock->getConnection())
     {
         // only show preview once
         if (prevEndItem != dock)
@@ -213,8 +215,10 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_drawnConnection)
         {
-            QGraphicsItem* dock = getTopLevelItemAtPos(event->scenePos(), CuteInputDock::Type);
-            if (dock && dock != _drawnConnection->getStartItem())
+            auto item = getTopLevelItemAtPos(event->scenePos(), CuteInputDock::Type);
+            auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
+
+            if (dock && !dock->getConnection())
             {
                 _drawnConnection->setEndItem(dock);
                 _drawnConnection->setZValue(-2.0); // hide behind nodes
