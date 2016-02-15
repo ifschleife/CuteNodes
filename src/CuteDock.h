@@ -2,7 +2,9 @@
 
 #include <QBrush>
 #include <QGraphicsItem>
-#include <QRectF>
+
+
+class CuteConnection;
 
 
 class CuteDock : public QGraphicsItem
@@ -18,6 +20,9 @@ public:
 
     QPointF getConnectionMagnet() const;
 
+    CuteConnection* getConnection() const          { return _connection; }
+    void setConnection(CuteConnection* connection) { _connection = connection; }
+
     void hideConnectionPreview();
     void showConnectionPreview();
 
@@ -29,8 +34,9 @@ private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
-    QRectF _paintRect{0.0, 0.0, 20.0, 10.0};
-    QBrush _brush;
+    QBrush          _brush;
+    CuteConnection* _connection{nullptr};
+    QRectF          _paintRect{0.0, 0.0, 20.0, 10.0};
 };
 
 

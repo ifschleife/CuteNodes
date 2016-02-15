@@ -4,7 +4,6 @@
 #include "CuteDock.h"
 #include "CuteNode.h"
 
-#include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
@@ -153,6 +152,16 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             _drawnConnection->updateEndPoint(event->scenePos());
             addItem(_drawnConnection);
         }
+        else if (itemType == CuteInputDock::Type)
+        {
+            auto dock = qgraphicsitem_cast<CuteInputDock*>(clickedItem);
+            auto connection = dock->getConnection();
+            if (connection)
+            {
+                _drawnConnection = connection;
+                _drawnConnection->setEndItem(nullptr);
+            }
+        }
     }
 }
 
@@ -194,6 +203,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             {
                 _drawnConnection->setEndItem(dock);
                 _drawnConnection->setZValue(-2.0); // hide behind nodes
+                _drawnConnection->setAsValid();
             }
             else
             {

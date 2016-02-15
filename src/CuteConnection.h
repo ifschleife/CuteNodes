@@ -12,9 +12,11 @@ public:
     enum { Type = UserType + 5 };
     int type() const override { return Type; }
 
-    QGraphicsItem* getStartItem() const;
     QGraphicsItem* getEndItem() const;
     void setEndItem(QGraphicsItem* item);
+    QGraphicsItem* getStartItem() const;
+
+    void setAsValid();
     void updateEndPoint(const QPointF& endPoint);
 
 private:

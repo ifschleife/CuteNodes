@@ -2,7 +2,6 @@
 
 #include <QGraphicsItem>
 #include <QPen>
-#include <QRectF>
 
 
 class CuteDock;

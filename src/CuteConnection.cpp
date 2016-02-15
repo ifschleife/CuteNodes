@@ -32,11 +32,6 @@ CuteConnection::~CuteConnection()
 }
 
 
-QGraphicsItem* CuteConnection::getStartItem() const
-{
-    return _connectedItems.first;
-}
-
 QGraphicsItem* CuteConnection::getEndItem() const
 {
     return _connectedItems.second;
@@ -45,6 +40,22 @@ QGraphicsItem* CuteConnection::getEndItem() const
 void CuteConnection::setEndItem(QGraphicsItem* item)
 {
     _connectedItems.second = item;
+}
+
+QGraphicsItem* CuteConnection::getStartItem() const
+{
+    return _connectedItems.first;
+}
+
+void CuteConnection::setAsValid()
+{
+    auto inputDock  = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
+    auto outputDock = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
+    if (!inputDock || !outputDock)
+        return;
+
+    inputDock->setConnection(this);
+    outputDock->setConnection(this);
 }
 
 void CuteConnection::updateEndPoint(const QPointF& endPoint)

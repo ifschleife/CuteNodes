@@ -2,8 +2,6 @@
 
 #include "CuteDock.h"
 
-#include <QBrush>
-#include <QGraphicsRectItem>
 #include <QPainter>
 
 

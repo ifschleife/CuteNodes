@@ -3,8 +3,6 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
-#include <algorithm>
-
 
 namespace
 {
