@@ -7,7 +7,6 @@ namespace
 {
     const QColor defaultColor = Qt::green;
     const QColor hoverColor   = Qt::blue;
-    const QColor selectColor  = Qt::red;
 }
 
 
@@ -16,7 +15,6 @@ CuteDock::CuteDock(QGraphicsItem* parent, const QPointF& pos)
     , _brush{defaultColor}
 {
     setAcceptHoverEvents(true);
-    setFlags(flags() | ItemIsSelectable);
     setPos(pos);
 }
 
@@ -43,7 +41,7 @@ void CuteDock::hideConnectionPreview()
 
 void CuteDock::showConnectionPreview()
 {
-    _brush.setColor(selectColor);
+    _brush.setColor(hoverColor);
     update();
 }
 
@@ -61,17 +59,6 @@ void CuteDock::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
         _brush.setColor(defaultColor);
 
     QGraphicsItem::hoverLeaveEvent(event);
-}
-
-QVariant CuteDock::itemChange(GraphicsItemChange change, const QVariant& value)
-{
-    if (change == ItemSelectedHasChanged)
-    {
-        const bool selected = value.toBool() == true;
-        _brush.setColor(selected ? selectColor : defaultColor);
-    }
-
-    return QGraphicsItem::itemChange(change, value);
 }
 
 void CuteDock::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
