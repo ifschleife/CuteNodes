@@ -10,7 +10,7 @@ class CuteDock;
 class CuteNode : public QGraphicsItem
 {
 public:
-    explicit CuteNode(QGraphicsItem* parent = nullptr);
+    explicit CuteNode(const QPointF& scenPos, QGraphicsItem* parent = nullptr);
     ~CuteNode() override;
 
     enum { Type = UserType + 1 };

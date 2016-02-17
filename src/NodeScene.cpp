@@ -4,7 +4,9 @@
 #include "CuteDock.h"
 #include "CuteNode.h"
 
+#include <QAction>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 #include <QPainter>
 
 
@@ -50,6 +52,26 @@ void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 
     painter->setPen({Qt::darkGray, 3});
     painter->drawRect(sceneRect());
+}
+
+void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* contextMenuEvent)
+{
+    const QPointF scenePos = contextMenuEvent->scenePos();
+
+    // only show menu when clicking inside the scene
+    if (!sceneRect().contains(scenePos))
+        return;
+
+    QMenu menu;
+
+    const auto newNodeAction{new QAction{tr("Add Node"), &menu}};
+    connect(newNodeAction, &QAction::triggered, [&]()
+    {
+        addItem(new CuteNode(scenePos));
+    });
+    
+    menu.addAction(newNodeAction);
+    menu.exec(contextMenuEvent->screenPos());
 }
 
 void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

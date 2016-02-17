@@ -14,9 +14,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     for (int i=3; i<8; ++i)
     {
-        CuteNode* node = new CuteNode;
-        node->setPos(i*300.0, 1000.0);
-        _scene->addItem(node);
+        _scene->addItem(new CuteNode{{i*300.0, 1000.0}});
     }
 
     _ui->nodeView->setScene(_scene.get());
@@ -28,11 +26,4 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
-}
-
-void MainWindow::on_actionAddNode_triggered()
-{
-    CuteNode* node = new CuteNode;
-    node->setPos(500, 300);
-    _scene->addItem(node);
 }

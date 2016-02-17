@@ -21,9 +21,6 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow() override;
 
-private slots:
-    void on_actionAddNode_triggered();
-
 private:
     std::unique_ptr<NodeScene>      _scene;
     std::unique_ptr<Ui::MainWindow> _ui;

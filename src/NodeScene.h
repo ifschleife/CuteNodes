@@ -22,6 +22,8 @@ public slots:
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* contextMenuEvent) override;
+
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void handleNodeDragging(const QPointF& mousePos);
     bool draggedNodePositionInSceneRect(const QGraphicsItem* node, const QPointF& nodePos) const;

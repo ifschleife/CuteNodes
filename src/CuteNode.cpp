@@ -5,10 +5,11 @@
 #include <QPainter>
 
 
-CuteNode::CuteNode(QGraphicsItem* parent)
+CuteNode::CuteNode(const QPointF& scenePos, QGraphicsItem* parent)
     : QGraphicsItem(parent)
 {
     setFlags(flags() | ItemContainsChildrenInShape | ItemIsMovable | ItemIsSelectable);
+    setPos(scenePos);
 
     for (int i=0; i<5; ++i)
     {
