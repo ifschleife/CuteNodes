@@ -1,5 +1,7 @@
 #include "CuteDock.h"
 
+#include "CuteConnection.h"
+
 #include <QPainter>
 
 
@@ -20,6 +22,11 @@ CuteDock::CuteDock(QGraphicsItem* parent, const QPointF& pos)
 
 CuteDock::~CuteDock()
 {
+    if (_connection)
+    {
+        // the connection is not parented through Qt so we need to delete it manually
+        delete _connection;
+    }
 }
 
 

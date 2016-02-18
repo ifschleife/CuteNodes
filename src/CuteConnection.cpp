@@ -8,7 +8,7 @@
 namespace
 {
     const QPen defaultPen {Qt::black, 2};
-    const QPen hoverPen   {Qt::blue,  4};
+    const QPen hoverPen   {Qt::blue,  2};
     const QPen selectPen  {Qt::red,   2};
 }
 
@@ -29,6 +29,13 @@ CuteConnection::CuteConnection(QGraphicsItem* startItem)
 
 CuteConnection::~CuteConnection()
 {
+    // invalidate both ends of the connection before deleting the connection
+    auto startItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
+    if (startItem)
+        startItem->setConnection(nullptr);
+    auto endItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
+    if (endItem)
+        endItem->setConnection(nullptr);
 }
 
 

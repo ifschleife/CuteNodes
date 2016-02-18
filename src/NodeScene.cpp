@@ -54,24 +54,39 @@ void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
     painter->drawRect(sceneRect());
 }
 
-void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* contextMenuEvent)
+void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
-    const QPointF scenePos = contextMenuEvent->scenePos();
-
     // only show menu when clicking inside the scene
-    if (!sceneRect().contains(scenePos))
+    if (!sceneRect().contains(event->scenePos()))
         return;
 
     QMenu menu;
 
-    const auto newNodeAction{new QAction{tr("Add Node"), &menu}};
-    connect(newNodeAction, &QAction::triggered, [&]()
+    QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
+    const int itemType = clickedItem ? clickedItem->type() : 0;
+
+    if (itemType == CuteNode::Type || itemType == CuteConnection::Type)
     {
-        addItem(new CuteNode(scenePos));
-    });
-    
-    menu.addAction(newNodeAction);
-    menu.exec(contextMenuEvent->screenPos());
+        const auto deleteItemAction{new QAction{tr("Delete"), &menu}};
+        connect(deleteItemAction, &QAction::triggered, [&clickedItem]()
+        {
+            delete clickedItem;
+        });
+
+        menu.addAction(deleteItemAction);
+    }
+    else
+    {
+        const auto newNodeAction{ new QAction{ tr("Add Node"), &menu } };
+        connect(newNodeAction, &QAction::triggered, [&]()
+        {
+            addItem(new CuteNode(event->scenePos()));
+        });
+
+        menu.addAction(newNodeAction);
+    }
+
+    menu.exec(event->screenPos());
 }
 
 void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

@@ -22,7 +22,7 @@ public slots:
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent* contextMenuEvent) override;
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void handleNodeDragging(const QPointF& mousePos);
