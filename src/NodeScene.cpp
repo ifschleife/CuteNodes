@@ -62,31 +62,64 @@ void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 
     QMenu menu;
 
-    QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-    const int itemType = clickedItem ? clickedItem->type() : 0;
+    const auto clickedItem = itemAt(event->scenePos(), QTransform());
+    const int clickedItemType = clickedItem ? clickedItem->type() : 0;
 
-    if (itemType == CuteNode::Type || itemType == CuteConnection::Type)
+    const auto nofSelectedItems = selectedItems().size();
+    if (nofSelectedItems > 1)
     {
-        const auto deleteItemAction{new QAction{tr("Delete"), &menu}};
-        connect(deleteItemAction, &QAction::triggered, [&clickedItem]()
-        {
-            delete clickedItem;
-        });
-
-        menu.addAction(deleteItemAction);
+        addMenuEntriesForMultiSelection(menu);
+    }
+    else if (clickedItemType == CuteNode::Type || clickedItemType == CuteConnection::Type)
+    {
+        addMenuEntriesForSingleSelection(event->scenePos(), menu);
     }
     else
     {
-        const auto newNodeAction{ new QAction{ tr("Add Node"), &menu } };
-        connect(newNodeAction, &QAction::triggered, [&]()
-        {
-            addItem(new CuteNode(event->scenePos()));
-        });
-
-        menu.addAction(newNodeAction);
+        addMenuEntriesForEmptySelection(event->scenePos(), menu);
     }
 
     menu.exec(event->screenPos());
+}
+
+void NodeScene::addMenuEntriesForSingleSelection(const QPointF& scenePos, QMenu& menu)
+{
+    const auto deleteItemAction{new QAction{tr("Delete"), &menu}};
+    connect(deleteItemAction, &QAction::triggered, [this, &scenePos]()
+    {
+        auto item = itemAt(scenePos, QTransform());
+        if (item)
+            delete item;
+    });
+
+    menu.addAction(deleteItemAction);
+}
+
+void NodeScene::addMenuEntriesForEmptySelection(const QPointF& scenePos, QMenu& menu)
+{
+    const auto newNodeAction{new QAction{tr("Add Node"), &menu}};
+    connect(newNodeAction, &QAction::triggered, [&]()
+    {
+        addItem(new CuteNode(scenePos));
+    });
+
+    menu.addAction(newNodeAction);
+}
+
+void NodeScene::addMenuEntriesForMultiSelection(QMenu& menu)
+{
+    const auto deleteSelectedItemsAction{new QAction{tr("Delete Selected Items"), &menu}};
+    connect(deleteSelectedItemsAction, &QAction::triggered, [this]()
+    {
+        // first we have to delete all nodes
+        auto nodes = getSelectedItems<CuteNode>();
+        qDeleteAll(nodes);
+        // and then all connections, mixing the order could cause double deletes
+        auto connections = getSelectedItems<CuteConnection>();
+        qDeleteAll(connections);
+    });
+
+    menu.addAction(deleteSelectedItemsAction);
 }
 
 void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -156,7 +189,7 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
     return !collision;
 }
 
-void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
+void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
 {
     _drawnConnection->updateEndPoint(mousePos);
 
@@ -187,11 +220,11 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos)
 
 void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    // needs to be called first so selection is up to date
-    QGraphicsScene::mousePressEvent(event);
-
     if (event->buttons() == Qt::LeftButton)
     {
+        // needs to be called first so selection is up to date
+        QGraphicsScene::mousePressEvent(event);
+
         QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
         const int itemType = clickedItem ? clickedItem->type() : 0;
 
@@ -220,11 +253,16 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
         }
     }
+    else if (event->buttons() == Qt::RightButton)
+    {
+        // this is necessary so the selection is not cleared before the context menu can be shown
+        event->accept();
+    }
 }
 
 void NodeScene::startDraggingSelectedNodes(const QPointF& dragStartPos)
 {
-    const auto selectedNodes = getSelectedNodes();
+    const auto selectedNodes = getSelectedItems<CuteNode>();
     _draggedNodes.reserve(selectedNodes.size());
     for (const auto& node: selectedNodes)
     {
@@ -235,17 +273,6 @@ void NodeScene::startDraggingSelectedNodes(const QPointF& dragStartPos)
         // this removes glitches when moving an item after panning/scrolling
         invalidate(node->boundingRect());
     }
-}
-
-std::vector<QGraphicsItem*> NodeScene::getSelectedNodes() const
-{
-    QList<QGraphicsItem*> items = selectedItems();
-
-    auto lastNode = std::partition(items.begin(), items.end(), [](const auto& item)
-    {
-        return qgraphicsitem_cast<CuteNode*>(item) != nullptr;
-    });
-    return {items.begin(), lastNode};
 }
 
 void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
@@ -293,4 +320,16 @@ QGraphicsItem* NodeScene::getTopLevelItemAtPos(const QPointF& scenePos, int item
     });
 
     return iter != itemsAtPos.end() ? *iter : nullptr;
+}
+
+template<typename ItemType>
+std::vector<QGraphicsItem*> NodeScene::getSelectedItems() const
+{
+    QList<QGraphicsItem*> items = selectedItems();
+
+    auto lastItem = std::partition(items.begin(), items.end(), [](const auto& item)
+    {
+        return qgraphicsitem_cast<ItemType*>(item) != nullptr;
+    });
+    return {items.begin(), lastItem};
 }

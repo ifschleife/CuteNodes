@@ -5,6 +5,7 @@
 
 
 class CuteConnection;
+class QMenu;
 
 
 // Adapted from http://stackoverflow.com/a/15054118/578536
@@ -23,19 +24,24 @@ private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
+    void addMenuEntriesForSingleSelection(const QPointF& scenePos, QMenu& menu);
+    void addMenuEntriesForMultiSelection(QMenu& menu);
+    void addMenuEntriesForEmptySelection(const QPointF& scenePos, QMenu& menu);
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void handleNodeDragging(const QPointF& mousePos);
     bool draggedNodePositionInSceneRect(const QGraphicsItem* node, const QPointF& nodePos) const;
     bool draggedNodePositionIsValid(const QGraphicsItem* node, const QPointF& nodePos) const;
-    void handleConnectionDrawing(const QPointF& mousePos);
+    void handleConnectionDrawing(const QPointF& mousePos) const;
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void startDraggingSelectedNodes(const QPointF& dragStartPos);
-    std::vector<QGraphicsItem*> getSelectedNodes() const;
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     QGraphicsItem* getTopLevelItemAtPos(const QPointF& scenePos, int itemType) const;
+
+    template<typename ItemType>
+    std::vector<QGraphicsItem*> getSelectedItems() const;
 
 private:
     QSize                    _gridSize{20, 20};
