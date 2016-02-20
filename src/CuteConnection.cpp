@@ -10,6 +10,18 @@ namespace
     const QPen defaultPen {Qt::black, 2};
     const QPen hoverPen   {Qt::blue,  2};
     const QPen selectPen  {Qt::red,   2};
+
+    constexpr qreal arrowLength            = 15.0;
+    constexpr qreal arrowLengthHeightRatio = 0.3;
+    constexpr qreal arrowPositionInPercent = 0.4;
+    constexpr qreal minLengthToShowArrow   = 50.0;
+
+    const auto arrowFillColor{Qt::green};
+
+    constexpr qreal degToArc(qreal deg)
+    {
+        return deg * M_PI / 180.0;
+    }
 }
 
 
@@ -114,6 +126,16 @@ void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, Q
     calculateSpline();
 
     painter->drawPath(path());
+
+    // we draw the arrow head a second time so we can fill it with a different color without
+    // "filling" up the bezier curve. this can probably be optimized away somehow.
+    const auto polygons = path().toSubpathPolygons();
+    if (polygons.size() > 1)
+    {
+        const auto arrow = polygons.at(1);
+        painter->setBrush({arrowFillColor});
+        painter->drawPolygon(arrow);
+    }
 }
 
 void CuteConnection::snapEndPointsToItems()
@@ -134,8 +156,34 @@ void CuteConnection::calculateSpline()
     const QPointF c1 = {center.x(), _startPoint.y()};
     const QPointF c2 = {center.x(), _endPoint.y()};
 
-    QPainterPath newSpline(_startPoint);
-    newSpline.cubicTo(c1, c2, _endPoint);
+    QPainterPath spline(_startPoint);
+    spline.cubicTo(c1, c2, _endPoint);
 
-    setPath(newSpline);
+    if (spline.length() > minLengthToShowArrow)
+        addArrowToSpline(spline);
+
+    setPath(spline);
+}
+
+void CuteConnection::addArrowToSpline(QPainterPath& spline) const
+{
+    const qreal angleAtArrowEnd{spline.angleAtPercent(arrowPositionInPercent)};
+    const qreal dy{sin(degToArc(angleAtArrowEnd)) * arrowLength};
+    const qreal dx{cos(degToArc(angleAtArrowEnd)) * arrowLength};
+
+    const QPointF arrowEndPoint = spline.pointAtPercent(arrowPositionInPercent);
+    const QPointF tangentEnd{arrowEndPoint.x() - dx, arrowEndPoint.y() + dy};
+
+    const qreal dxScaled{dx * arrowLengthHeightRatio};
+    const qreal dyScaled{dy * arrowLengthHeightRatio};
+    const QPointF p2{tangentEnd.x() - dyScaled, tangentEnd.y() - dxScaled};
+    const QPointF p3{tangentEnd.x() + dyScaled, tangentEnd.y() + dxScaled};
+
+    QPainterPath arrowHead{arrowEndPoint};
+    arrowHead.lineTo(p3);
+    arrowHead.lineTo(p2);
+    arrowHead.lineTo(arrowEndPoint);
+
+    spline.moveTo(arrowEndPoint);
+    spline.addPath(arrowHead);
 }

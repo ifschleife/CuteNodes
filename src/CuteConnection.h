@@ -27,6 +27,7 @@ private:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void snapEndPointsToItems();
     void calculateSpline();
+    void addArrowToSpline(QPainterPath& spline) const;
 
 private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;
