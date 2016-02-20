@@ -11,9 +11,9 @@ namespace
     const QPen hoverPen   {Qt::blue,  2};
     const QPen selectPen  {Qt::red,   2};
 
+    constexpr qreal arrowEndInPercent      = 0.5;
     constexpr qreal arrowLength            = 15.0;
     constexpr qreal arrowLengthHeightRatio = 0.3;
-    constexpr qreal arrowPositionInPercent = 0.4;
     constexpr qreal minLengthToShowArrow   = 50.0;
 
     const auto arrowFillColor{Qt::green};
@@ -167,11 +167,12 @@ void CuteConnection::calculateSpline()
 
 void CuteConnection::addArrowToSpline(QPainterPath& spline) const
 {
-    const qreal angleAtArrowEnd{spline.angleAtPercent(arrowPositionInPercent)};
-    const qreal dy{sin(degToArc(angleAtArrowEnd)) * arrowLength};
-    const qreal dx{cos(degToArc(angleAtArrowEnd)) * arrowLength};
+    const qreal arrowStartInPercent{spline.percentAtLength((spline.length() * arrowEndInPercent) - arrowLength)};
+    const qreal angleAtArrowStart{spline.angleAtPercent(arrowStartInPercent)};
+    const qreal dy{sin(degToArc(angleAtArrowStart)) * arrowLength};
+    const qreal dx{cos(degToArc(angleAtArrowStart)) * arrowLength};
 
-    const QPointF arrowEndPoint = spline.pointAtPercent(arrowPositionInPercent);
+    const QPointF arrowEndPoint = spline.pointAtPercent(arrowStartInPercent); // p1 of arrow triangle
     const QPointF tangentEnd{arrowEndPoint.x() - dx, arrowEndPoint.y() + dy};
 
     const qreal dxScaled{dx * arrowLengthHeightRatio};
