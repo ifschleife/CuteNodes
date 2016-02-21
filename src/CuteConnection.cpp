@@ -8,6 +8,7 @@
 namespace
 {
     const QPen defaultPen {Qt::black, 2};
+    const QPen deletePen  {Qt::black, 2, Qt::DashLine};
     const QPen hoverPen   {Qt::blue,  2};
     const QPen selectPen  {Qt::red,   2};
 
@@ -64,6 +65,16 @@ void CuteConnection::setEndItem(QGraphicsItem* item)
 QGraphicsItem* CuteConnection::getStartItem() const
 {
     return _connectedItems.first;
+}
+
+void CuteConnection::hideDeletionPreview()
+{
+    setPen(defaultPen);
+}
+
+void CuteConnection::showDeletionPreview()
+{
+    setPen(deletePen);
 }
 
 void CuteConnection::setAsValid()

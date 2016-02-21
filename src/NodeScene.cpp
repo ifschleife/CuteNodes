@@ -199,12 +199,19 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
     auto item = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
     auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
 
-    if (dock && !dock->getConnection())
+    if (dock)
     {
+        // if dock already has a connection, that connection will be removed upon mouse release
+        auto existingConnection = dock->getConnection();
+        if (existingConnection)
+        {
+            existingConnection->showDeletionPreview();
+        }
+
         // only show preview once
         if (prevEndItem != dock)
         {
-            qgraphicsitem_cast<CuteInputDock*>(dock)->showConnectionPreview();
+            dock->showConnectionPreview();
             _drawnConnection->setEndItem(dock);
         }
         showingPreview = true;
@@ -213,7 +220,14 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
     // only hide previously shown preview when there was one
     if (prevEndItem && !showingPreview)
     {
-        qgraphicsitem_cast<CuteInputDock*>(prevEndItem)->hideConnectionPreview();
+        auto prevDock = qgraphicsitem_cast<CuteInputDock*>(prevEndItem);
+        prevDock->hideConnectionPreview();
+
+        // also hide the preview for a connection deletion, if previous dock had a connection
+        auto existingConnection = prevDock->getConnection();
+        if (existingConnection)
+            existingConnection->hideDeletionPreview();
+
         _drawnConnection->setEndItem(nullptr);
     }
 }
@@ -285,8 +299,14 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             auto item = getTopLevelItemAtPos(event->scenePos(), CuteInputDock::Type);
             auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
 
-            if (dock && !dock->getConnection())
+            if (dock)
             {
+                auto existingConnection = dock->getConnection();
+                if (existingConnection)
+                {
+                    delete existingConnection;
+                }
+
                 _drawnConnection->setEndItem(dock);
                 _drawnConnection->setZValue(-2.0); // hide behind nodes
                 _drawnConnection->setAsValid();

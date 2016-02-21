@@ -16,6 +16,9 @@ public:
     void setEndItem(QGraphicsItem* item);
     QGraphicsItem* getStartItem() const;
 
+    void hideDeletionPreview();
+    void showDeletionPreview();
+
     void setAsValid();
     void updateEndPoint(const QPointF& endPoint);
 
