@@ -6,6 +6,8 @@
 
 #include <QAction>
 #include <QGraphicsSceneMouseEvent>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QMenu>
 #include <QPainter>
 
@@ -17,8 +19,8 @@ namespace
 }
 
 
-NodeScene::NodeScene(const QRectF& sceneRect)
-    : QGraphicsScene(sceneRect, nullptr)
+NodeScene::NodeScene()
+    : QGraphicsScene()
 {
 
 }
@@ -28,6 +30,27 @@ NodeScene::~NodeScene()
 
 }
 
+
+void NodeScene::read(const QJsonObject& json)
+{
+    const auto sceneCfg = json["scene"].toObject();
+    const auto width = sceneCfg["width"].toDouble();
+    const auto height = sceneCfg["height"].toDouble();
+    setSceneRect(0.0, 0.0, width, height);
+
+    const auto nodes = json["nodes"].toArray();
+    for (const auto& nodeCfg: nodes)
+    {
+        auto node = new CuteNode;
+        node->read(nodeCfg.toObject());
+        addItem(node);
+    }
+}
+
+void NodeScene::write(QJsonObject& json) const
+{
+    Q_UNUSED(json);
+}
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
@@ -100,7 +123,9 @@ void NodeScene::addMenuEntriesForEmptySelection(const QPointF& scenePos, QMenu& 
     const auto newNodeAction{new QAction{tr("Add Node"), &menu}};
     connect(newNodeAction, &QAction::triggered, [&]()
     {
-        addItem(new CuteNode(scenePos));
+        auto node = new CuteNode;
+        node->setPos(scenePos);
+        addItem(node);
     });
 
     menu.addAction(newNodeAction);

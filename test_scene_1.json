@@ -1,0 +1,64 @@
+{
+    "scene":
+    {
+        "name": "Big ass scene",
+        "width": 3000.0,
+        "height": 3000.0,
+        "centerx": 1000.0,
+        "centery": 1000.0
+    },
+
+    "nodes":
+    [
+        {
+            "name": "Node 1",
+            "icon": "Path to Icon",
+            "xpos": 200.0,
+            "ypos": 200.0,
+            "inputs":
+            [
+                {
+                    "id": "id 1",
+                    "type": "int",
+                    "name": "foo"
+                },
+                {
+                    "id": "id 2",
+                    "type": "double",
+                    "name": "double in"
+                },
+                {
+                    "id": "id 3",
+                    "type": "double",
+                    "name": "another double in"
+                },
+                {
+                    "id": "id 4",
+                    "type": "Vec3",
+                    "name": "Vec3 input"
+                }
+            ],
+            "outputs":
+            [
+                {
+                    "id": "id 5",
+                    "type": "int",
+                    "name": "some int out"
+                },
+                {
+                    "id": "id 6",
+                    "type": "double",
+                    "name": "some double out"
+                }
+            ]
+        }
+    ],
+
+    "connections":
+    [
+        {
+            "source": "id 5",
+            "dest": "id 1"
+        }
+    ]
+}

@@ -10,13 +10,16 @@ class CuteDock;
 class CuteNode : public QGraphicsItem
 {
 public:
-    explicit CuteNode(const QPointF& scenPos, QGraphicsItem* parent = nullptr);
+    explicit CuteNode(QGraphicsItem* parent = nullptr);
     ~CuteNode() override;
 
     enum { Type = UserType + 1 };
 
     QRectF boundingRect() const override;
     int type() const override { return Type; }
+
+    void read(const QJsonObject& json);
+    void write(QJsonObject& json) const;
 
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
@@ -26,6 +29,7 @@ private:
     std::vector<CuteDock*> _inputConnectors;
     std::vector<CuteDock*> _outputConnectors;
 
-    QRectF _paintRect{0.0, 0.0, 140.0, 300.0};
-    QPen   _pen{Qt::black};
+    QString _name{"Cute Node"};
+    QRectF  _paintRect{0.0, 0.0, 140.0, 300.0};
+    QPen    _pen{Qt::black};
 };

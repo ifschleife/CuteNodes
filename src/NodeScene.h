@@ -13,8 +13,11 @@ class QMenu;
 class NodeScene : public QGraphicsScene
 {
 public:
-    explicit NodeScene(const QRectF& sceneRect);
+    explicit NodeScene();
     ~NodeScene() override;
+
+    void read(const QJsonObject& json);
+    void write(QJsonObject& json) const;
 
 public slots:
     void toggleGridSnapping()  { _gridSnapping  = !_gridSnapping; }

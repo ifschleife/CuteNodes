@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
@@ -37,6 +37,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionLoadScene"/>
    <addaction name="actionToggleGrid"/>
    <addaction name="actionToggleSnap"/>
    <addaction name="actionToggleOverlap"/>
@@ -73,6 +74,14 @@
    </property>
    <property name="toolTip">
     <string>Toggle Node overlap</string>
+   </property>
+  </action>
+  <action name="actionLoadScene">
+   <property name="text">
+    <string>LoadScene</string>
+   </property>
+   <property name="toolTip">
+    <string>Load scene from file</string>
    </property>
   </action>
  </widget>
