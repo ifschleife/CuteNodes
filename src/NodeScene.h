@@ -46,7 +46,7 @@ private:
     QGraphicsItem* getTopLevelItemAtPos(const QPointF& scenePos, int itemType) const;
 
     template<typename ItemType>
-    std::vector<ItemType*> getItemsOfType();
+    std::vector<ItemType*> getItemsOfType() const;
     template<typename ItemType>
     std::vector<QGraphicsItem*> getSelectedItems() const;
 

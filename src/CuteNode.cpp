@@ -63,7 +63,27 @@ void CuteNode::read(const QJsonObject& json)
 
 void CuteNode::write(QJsonObject& json) const
 {
-    Q_UNUSED(json);
+    json["name"] = _name;
+    json["xpos"] = scenePos().x();
+    json["ypos"] = scenePos().y();
+
+    QJsonArray destArray;
+    for (const auto& dock: _inputConnectors)
+    {
+        QJsonObject dockJson;
+        dock->write(dockJson);
+        destArray.append(dockJson);
+    }
+    json["inputs"] = destArray;
+
+    QJsonArray sourceArray;
+    for (const auto& dock: _outputConnectors)
+    {
+        QJsonObject dockJson;
+        dock->write(dockJson);
+        sourceArray.append(dockJson);
+    }
+    json["outputs"] = sourceArray;
 }
 
 QVariant CuteNode::itemChange(GraphicsItemChange change, const QVariant& value)

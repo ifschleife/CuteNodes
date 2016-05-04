@@ -56,30 +56,30 @@ void NodeScene::readConnections(const QJsonArray& connections)
 
     for (const auto& cfg: connections)
     {
-        const auto outID = QUuid(cfg.toObject()["source"].toString());
-        const auto inID  = QUuid(cfg.toObject()["dest"].toString());
+        const auto sourceID = QUuid(cfg.toObject()["source"].toString());
+        const auto sourceDock = std::find_if(begin(outDocks), end(outDocks), [&sourceID](const auto& dock)
+        {
+            return dock->getUuid() == sourceID;
+        });
 
-        const auto startDock = std::find_if(begin(outDocks), end(outDocks), [&outID](const auto& dock)
+        const auto destID = QUuid(cfg.toObject()["dest"].toString());
+        const auto destDock = std::find_if(begin(inDocks), end(inDocks), [&destID](const auto& dock)
         {
-            return dock->getUuid() == outID;
+            return dock->getUuid() == destID;
         });
-        const auto endDock = std::find_if(begin(inDocks), end(inDocks), [&inID](const auto& dock)
-        {
-            return dock->getUuid() == inID;
-        });
-        if (end(outDocks) == startDock || end(inDocks) == endDock)
+        if (end(outDocks) == sourceDock || end(inDocks) == destDock)
             continue;
 
         // If the scene file is faulty and has more than one connection starting from the same dock
         // two connections would be created which will lead to errors later on. This is why we need to
         // make sure that the startDock does not have a connection yet.
-        if (nullptr == (*startDock)->getConnection())
+        if (nullptr == (*sourceDock)->getConnection())
         {
-            auto connection = new CuteConnection{*startDock};
+            auto connection = new CuteConnection{*sourceDock};
             if (!connection)
                 return;
 
-            connection->setEndItem(*endDock);
+            connection->setEndItem(*destDock);
             connection->setAsValid();
             addItem(connection);
         }
@@ -88,7 +88,22 @@ void NodeScene::readConnections(const QJsonArray& connections)
 
 void NodeScene::write(QJsonObject& json) const
 {
-    Q_UNUSED(json);
+    auto sceneObject = json["scene"].toObject();
+    sceneObject["width"] = width();
+    sceneObject["height"] = height();
+
+    json["scene"] = sceneObject;
+
+    QJsonArray nodeArray;
+
+    const auto nodes = getItemsOfType<CuteNode>();
+    for (const auto& node: nodes)
+    {
+        QJsonObject nodeJson;
+        node->write(nodeJson);
+        nodeArray.append(nodeJson);
+    }
+    json["nodes"] = nodeArray;
 }
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
@@ -407,7 +422,7 @@ QGraphicsItem* NodeScene::getTopLevelItemAtPos(const QPointF& scenePos, int item
 }
 
 template<typename ItemType>
-std::vector<ItemType*> NodeScene::getItemsOfType()
+std::vector<ItemType*> NodeScene::getItemsOfType() const
 {
     std::vector<ItemType*> foundItems;
     for (auto& item: items())

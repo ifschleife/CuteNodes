@@ -11,6 +11,7 @@ namespace Ui
 }
 
 class NodeScene;
+class QFile;
 
 
 class MainWindow : public QMainWindow
@@ -23,8 +24,14 @@ public:
 
 private slots:
     void on_actionLoadScene_triggered();
+    void on_actionSaveScene_triggered();
+    void on_actionSaveSceneAs_triggered();
+
+private:
+    void SaveSceneToFile(QFile& sceneFile);
 
 private:
     std::unique_ptr<NodeScene>      _scene;
+    QString                         _sceneFileName;
     std::unique_ptr<Ui::MainWindow> _ui;
 };

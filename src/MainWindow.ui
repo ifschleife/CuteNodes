@@ -38,6 +38,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionLoadScene"/>
+   <addaction name="actionSaveScene"/>
+   <addaction name="actionSaveSceneAs"/>
    <addaction name="actionToggleGrid"/>
    <addaction name="actionToggleSnap"/>
    <addaction name="actionToggleOverlap"/>
@@ -82,6 +84,28 @@
    </property>
    <property name="toolTip">
     <string>Load scene from file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSaveScene">
+   <property name="text">
+    <string>SaveScene</string>
+   </property>
+   <property name="toolTip">
+    <string>Save scene to file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveSceneAs">
+   <property name="text">
+    <string>SaveSceneAs</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Scene to a different file</string>
    </property>
   </action>
  </widget>
