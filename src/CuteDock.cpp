@@ -2,6 +2,7 @@
 
 #include "CuteConnection.h"
 
+#include <QJsonObject>
 #include <QPainter>
 
 
@@ -29,6 +30,17 @@ CuteDock::~CuteDock()
     }
 }
 
+
+void CuteDock::read(const QJsonObject& json)
+{
+    const auto idString = json["id"].toString();
+    _uuid = QUuid(idString);
+}
+
+void CuteDock::write(QJsonObject& json) const
+{
+    json["id"] = _uuid.toString();
+}
 
 QRectF CuteDock::boundingRect() const
 {

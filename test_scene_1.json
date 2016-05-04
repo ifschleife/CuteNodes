@@ -4,8 +4,8 @@
         "name": "Big ass scene",
         "width": 3000.0,
         "height": 3000.0,
-        "centerx": 1000.0,
-        "centery": 1000.0
+        "centerx": 300.0,
+        "centery": 300.0
     },
 
     "nodes":
@@ -18,22 +18,22 @@
             "inputs":
             [
                 {
-                    "id": "id 1",
+                    "id": "{b11922c8-6d35-460b-bf6a-4ca955b7bdd6}",
                     "type": "int",
                     "name": "foo"
                 },
                 {
-                    "id": "id 2",
+                    "id": "{07033c73-1334-4252-8148-8f9545555fe1}",
                     "type": "double",
                     "name": "double in"
                 },
                 {
-                    "id": "id 3",
+                    "id": "{1962f414-530e-487d-9365-367e1ac24136}",
                     "type": "double",
                     "name": "another double in"
                 },
                 {
-                    "id": "id 4",
+                    "id": "{483f4981-4a1d-423b-9cd7-112e87d33a1d}",
                     "type": "Vec3",
                     "name": "Vec3 input"
                 }
@@ -41,12 +41,39 @@
             "outputs":
             [
                 {
-                    "id": "id 5",
+                    "id": "{0d36285e-f824-4138-a1f5-6b3c48d2fa69}",
                     "type": "int",
                     "name": "some int out"
                 },
                 {
-                    "id": "id 6",
+                    "id": "{b3e9dda2-5d56-4cdd-8613-61373042fe9b}",
+                    "type": "double",
+                    "name": "some double out"
+                }
+            ]
+        },
+        {
+            "name": "Node 2",
+            "icon": "Path to Icon",
+            "xpos": 500.0,
+            "ypos": 200.0,
+            "inputs":
+            [
+                {
+                    "id": "{549e5ad0-c85c-4f4b-a48d-7128551182ca}",
+                    "type": "int",
+                    "name": "foo"
+                }
+            ],
+            "outputs":
+            [
+                {
+                    "id": "{e58b8dcb-8e59-441e-a5d8-ca2fca154525}",
+                    "type": "int",
+                    "name": "some int out"
+                },
+                {
+                    "id": "{7a6940ca-db46-4c82-9bd4-15e33be54b5a}",
                     "type": "double",
                     "name": "some double out"
                 }
@@ -57,8 +84,13 @@
     "connections":
     [
         {
-            "source": "id 5",
-            "dest": "id 1"
+            "source": "{0d36285e-f824-4138-a1f5-6b3c48d2fa69}",
+            "dest": "{b11922c8-6d35-460b-bf6a-4ca955b7bdd6}"
+        },
+        {
+            "source": "{b3e9dda2-5d56-4cdd-8613-61373042fe9b}",
+            "dest": "{549e5ad0-c85c-4f4b-a48d-7128551182ca}"
         }
     ]
 }
+

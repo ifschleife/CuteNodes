@@ -2,6 +2,7 @@
 
 #include <QBrush>
 #include <QGraphicsItem>
+#include <QUuid>
 
 
 class CuteConnection;
@@ -13,10 +14,15 @@ public:
     explicit CuteDock(QGraphicsItem* parent, const QPointF& pos);
     ~CuteDock() override;
 
+    void read(const QJsonObject& json);
+    void write(QJsonObject& json) const;
+
     enum { Type = UserType + 2 };
+    int type() const override { return Type; }
 
     QRectF boundingRect() const override;
-    int type() const override { return Type; }
+
+    QUuid getUuid() const { return _uuid; }
 
     QPointF getConnectionMagnet() const;
 
@@ -36,6 +42,7 @@ private:
     QBrush          _brush;
     CuteConnection* _connection{nullptr};
     QRectF          _paintRect{0.0, 0.0, 20.0, 10.0};
+    QUuid           _uuid;
 };
 
 

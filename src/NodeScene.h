@@ -26,6 +26,8 @@ public slots:
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
+    void readConnections(const QJsonArray& connections);
+
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
     void addMenuEntriesForSingleSelection(const QPointF& scenePos, QMenu& menu);
     void addMenuEntriesForMultiSelection(QMenu& menu);
@@ -43,6 +45,8 @@ private:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     QGraphicsItem* getTopLevelItemAtPos(const QPointF& scenePos, int itemType) const;
 
+    template<typename ItemType>
+    std::vector<ItemType*> getItemsOfType();
     template<typename ItemType>
     std::vector<QGraphicsItem*> getSelectedItems() const;
 

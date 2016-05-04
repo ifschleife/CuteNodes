@@ -45,6 +45,45 @@ void NodeScene::read(const QJsonObject& json)
         node->read(nodeCfg.toObject());
         addItem(node);
     }
+
+    readConnections(json["connections"].toArray());
+}
+
+void NodeScene::readConnections(const QJsonArray& connections)
+{
+    const auto inDocks  = getItemsOfType<CuteInputDock>();
+    const auto outDocks = getItemsOfType<CuteOutputDock>();
+
+    for (const auto& cfg: connections)
+    {
+        const auto outID = QUuid(cfg.toObject()["source"].toString());
+        const auto inID  = QUuid(cfg.toObject()["dest"].toString());
+
+        const auto startDock = std::find_if(begin(outDocks), end(outDocks), [&outID](const auto& dock)
+        {
+            return dock->getUuid() == outID;
+        });
+        const auto endDock = std::find_if(begin(inDocks), end(inDocks), [&inID](const auto& dock)
+        {
+            return dock->getUuid() == inID;
+        });
+        if (end(outDocks) == startDock || end(inDocks) == endDock)
+            continue;
+
+        // If the scene file is faulty and has more than one connection starting from the same dock
+        // two connections would be created which will lead to errors later on. This is why we need to
+        // make sure that the startDock does not have a connection yet.
+        if (nullptr == (*startDock)->getConnection())
+        {
+            auto connection = new CuteConnection{*startDock};
+            if (!connection)
+                return;
+
+            connection->setEndItem(*endDock);
+            connection->setAsValid();
+            addItem(connection);
+        }
+    }
 }
 
 void NodeScene::write(QJsonObject& json) const
@@ -365,6 +404,19 @@ QGraphicsItem* NodeScene::getTopLevelItemAtPos(const QPointF& scenePos, int item
     });
 
     return iter != itemsAtPos.end() ? *iter : nullptr;
+}
+
+template<typename ItemType>
+std::vector<ItemType*> NodeScene::getItemsOfType()
+{
+    std::vector<ItemType*> foundItems;
+    for (auto& item: items())
+    {
+        const auto itemOfDesiredType = qgraphicsitem_cast<ItemType*>(item);
+        if (itemOfDesiredType)
+            foundItems.push_back(itemOfDesiredType);
+    }
+    return foundItems;
 }
 
 template<typename ItemType>

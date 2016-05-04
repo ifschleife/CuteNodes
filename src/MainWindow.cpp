@@ -24,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionLoadScene_triggered()
 {
-    const auto sceneFileName = QFileDialog::getOpenFileName(this);
+    const auto sceneFileName = QFileDialog::getOpenFileName(this, tr("Open Scene"), "..", tr("JSON (*.json)"));
     if (sceneFileName.isNull())
         return;
 
@@ -44,10 +44,8 @@ void MainWindow::on_actionLoadScene_triggered()
 
     if (_scene)
     {
-        auto scene = _scene.release();
-        disconnect(_ui->actionToggleSnap, &QAction::triggered, scene, &NodeScene::toggleGridSnapping);
-        disconnect(_ui->actionToggleOverlap, &QAction::triggered, scene, &NodeScene::toggleNodeOverlap);
-        delete scene;
+        disconnect(_ui->actionToggleSnap, &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
+        disconnect(_ui->actionToggleOverlap, &QAction::triggered, _scene.get(), &NodeScene::toggleNodeOverlap);
     }
     _scene = std::make_unique<NodeScene>();
 

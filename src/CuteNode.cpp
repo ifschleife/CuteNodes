@@ -7,6 +7,13 @@
 #include <QPainter>
 
 
+namespace
+{
+    constexpr qreal verticalDockOffset = 50.0;
+    constexpr qreal verticalDockDist   = 30.0;
+}
+
+
 CuteNode::CuteNode(QGraphicsItem* parent)
     : QGraphicsItem(parent)
 {
@@ -31,22 +38,24 @@ void CuteNode::read(const QJsonObject& json)
 
     _inputConnectors.clear();
     const auto inputs  = json["inputs"].toArray();
-    static int inctr = 0;
-    for (const auto& input: inputs)
+    for (const auto& inputCfg: inputs)
     {
-        const auto dockPos = QPointF{0.0, 50.0 + inctr*30.0};
-        _inputConnectors.emplace_back(new CuteInputDock{this, dockPos});
-        ++inctr;
+        const auto dockPos = QPointF{0.0, verticalDockOffset + _inputConnectors.size()*verticalDockDist};
+        auto dock = new CuteInputDock{this, dockPos};
+        dock->read(inputCfg.toObject());
+
+        _inputConnectors.push_back(dock);
     }
 
     _outputConnectors.clear();
     const auto outputs = json["outputs"].toArray();
-    static int outctr = 0;
-    for (const auto& output: outputs)
+    for (const auto& cfg: outputs)
     {
-        const auto dockPos = QPointF{120.0, 50.0 + outctr*30.0};
-        _inputConnectors.emplace_back(new CuteInputDock{this, dockPos});
-        ++outctr;
+        const auto dockPos = QPointF{120.0, verticalDockOffset + _outputConnectors.size()*verticalDockDist};
+        auto dock = new CuteOutputDock{this, dockPos};
+        dock->read(cfg.toObject());
+
+        _outputConnectors.push_back(dock);
     }
 
     _name = json["name"].toString();
