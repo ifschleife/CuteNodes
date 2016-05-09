@@ -89,16 +89,18 @@ void MainWindow::on_actionSaveSceneAs_triggered()
         return;
 
     SaveSceneToFile(sceneFile);
+
+    setWindowTitle(_sceneFileName);
 }
 
 void MainWindow::SaveSceneToFile(QFile& sceneFile)
 {
     auto json = QJsonObject();
+    const auto center = _ui->nodeView->getCenterOfViewport();
     QJsonObject sceneObject
     {
-        // this does not give the center of the viewport :(
-        {"centerx", _ui->nodeView->sceneRect().center().x()},
-        {"centery", _ui->nodeView->sceneRect().center().y()}
+        {"centerx", center.x()},
+        {"centery", center.y()}
     };
     json.insert("scene", sceneObject);
     _scene->write(json);

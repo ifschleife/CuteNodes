@@ -25,6 +25,11 @@ NodeView::~NodeView()
 }
 
 
+QPointF NodeView::getCenterOfViewport() const
+{
+    return mapToScene(viewport()->rect().center());
+}
+
 void NodeView::mouseMoveEvent(QMouseEvent* event)
 {
     if (event->buttons() == Qt::MiddleButton)

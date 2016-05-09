@@ -11,6 +11,8 @@ public:
     explicit NodeView(QWidget* parent = nullptr);
     ~NodeView() override;
 
+    QPointF getCenterOfViewport() const;
+
 private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
