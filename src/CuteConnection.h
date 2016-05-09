@@ -6,21 +6,21 @@
 class CuteConnection : public QGraphicsPathItem
 {
 public:
-    explicit CuteConnection(QGraphicsItem* startItem);
+    explicit CuteConnection(QGraphicsItem* sourceItem);
     ~CuteConnection() override;
 
     enum { Type = UserType + 5 };
     int type() const override { return Type; }
 
-    QGraphicsItem* getEndItem() const;
-    void setEndItem(QGraphicsItem* item);
-    QGraphicsItem* getStartItem() const;
+    QGraphicsItem* getDestinationItem() const;
+    void setDestinationItem(QGraphicsItem* item);
+    QGraphicsItem* getSourceItem() const;
 
     void hideDeletionPreview();
     void showDeletionPreview();
 
     void setAsValid();
-    void updateEndPoint(const QPointF& endPoint);
+    void updateDestinationItemPosition(const QPointF& destItemPos);
 
 private:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
@@ -36,6 +36,6 @@ private:
     std::pair<QGraphicsItem*, QGraphicsItem*> _connectedItems;
 
     // temps
-    QPointF _endPoint;
-    QPointF _startPoint;
+    QPointF _destItemPos;
+    QPointF _sourceItemPos;
 };

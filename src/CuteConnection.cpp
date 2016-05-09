@@ -2,6 +2,7 @@
 
 #include "CuteDock.h"
 
+#include <math.h>
 #include <QPainter>
 
 
@@ -26,11 +27,11 @@ namespace
 }
 
 
-CuteConnection::CuteConnection(QGraphicsItem* startItem)
-    : QGraphicsPathItem{QPainterPath{startItem->scenePos()}}
-    , _connectedItems{startItem, nullptr}
-    , _endPoint{startItem->scenePos()}
-    , _startPoint{startItem->scenePos()}
+CuteConnection::CuteConnection(QGraphicsItem* sourceItem)
+    : QGraphicsPathItem{QPainterPath{sourceItem->scenePos()}}
+    , _connectedItems{sourceItem, nullptr}
+    , _destItemPos{sourceItem->scenePos()}
+    , _sourceItemPos{sourceItem->scenePos()}
 {
     setAcceptHoverEvents(true);
     setFlags(flags() | ItemIsSelectable);
@@ -43,26 +44,26 @@ CuteConnection::CuteConnection(QGraphicsItem* startItem)
 CuteConnection::~CuteConnection()
 {
     // invalidate both ends of the connection before deleting the connection
-    auto startItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
-    if (startItem)
-        startItem->setConnection(nullptr);
-    auto endItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
-    if (endItem)
-        endItem->setConnection(nullptr);
+    auto sourceItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
+    if (sourceItem)
+        sourceItem->setConnection(nullptr);
+    auto destItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
+    if (destItem)
+        destItem->setConnection(nullptr);
 }
 
 
-QGraphicsItem* CuteConnection::getEndItem() const
+QGraphicsItem* CuteConnection::getDestinationItem() const
 {
     return _connectedItems.second;
 }
 
-void CuteConnection::setEndItem(QGraphicsItem* item)
+void CuteConnection::setDestinationItem(QGraphicsItem* item)
 {
     _connectedItems.second = item;
 }
 
-QGraphicsItem* CuteConnection::getStartItem() const
+QGraphicsItem* CuteConnection::getSourceItem() const
 {
     return _connectedItems.first;
 }
@@ -88,9 +89,9 @@ void CuteConnection::setAsValid()
     outputDock->setConnection(this);
 }
 
-void CuteConnection::updateEndPoint(const QPointF& endPoint)
+void CuteConnection::updateDestinationItemPosition(const QPointF& destItemPos)
 {
-    _endPoint = endPoint;
+    _destItemPos = destItemPos;
 
     update();
 }
@@ -151,24 +152,24 @@ void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, Q
 
 void CuteConnection::snapEndPointsToItems()
 {
-    const auto startDock = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
-    if (startDock)
-        _startPoint = startDock->getConnectionMagnet();
+    const auto sourceItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
+    if (sourceItem)
+        _sourceItemPos = sourceItem->getConnectionMagnet();
 
-    const auto endItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
-    if (endItem)
-        _endPoint = endItem->getConnectionMagnet();
+    const auto destItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
+    if (destItem)
+        _destItemPos = destItem->getConnectionMagnet();
 }
 
 void CuteConnection::calculateSpline()
 {
     // initially the path will be empty, to not get a glitch on the first paint we use the startPoint as center
-    const QPointF center = path().isEmpty() ? _startPoint : path().pointAtPercent(0.5);
-    const QPointF c1 = {center.x(), _startPoint.y()};
-    const QPointF c2 = {center.x(), _endPoint.y()};
+    const QPointF center = path().isEmpty() ? _sourceItemPos : path().pointAtPercent(0.5);
+    const QPointF c1 = {center.x(), _sourceItemPos.y()};
+    const QPointF c2 = {center.x(), _destItemPos.y()};
 
-    QPainterPath spline(_startPoint);
-    spline.cubicTo(c1, c2, _endPoint);
+    QPainterPath spline(_sourceItemPos);
+    spline.cubicTo(c1, c2, _destItemPos);
 
     if (spline.length() > minLengthToShowArrow)
         addArrowToSpline(spline);

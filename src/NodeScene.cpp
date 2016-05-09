@@ -52,60 +52,39 @@ void NodeScene::read(const QJsonObject& json)
 
 void NodeScene::readConnections(const QJsonArray& connections)
 {
-    const auto inDocks  = getItemsOfType<CuteInputDock>();
-    const auto outDocks = getItemsOfType<CuteOutputDock>();
+    const auto sourceDocks = getItemsOfType<CuteInputDock>();
+    const auto destDocks   = getItemsOfType<CuteOutputDock>();
 
     for (const auto& cfg: connections)
     {
         const auto sourceID = QUuid(cfg.toObject()["source"].toString());
-        const auto sourceDock = std::find_if(begin(outDocks), end(outDocks), [&sourceID](const auto& dock)
+        const auto sourceDock = std::find_if(begin(destDocks), end(destDocks), [&sourceID](const auto& dock)
         {
             return dock->getUuid() == sourceID;
         });
 
         const auto destID = QUuid(cfg.toObject()["dest"].toString());
-        const auto destDock = std::find_if(begin(inDocks), end(inDocks), [&destID](const auto& dock)
+        const auto destDock = std::find_if(begin(sourceDocks), end(sourceDocks), [&destID](const auto& dock)
         {
             return dock->getUuid() == destID;
         });
-        if (end(outDocks) == sourceDock || end(inDocks) == destDock)
+        if (end(destDocks) == sourceDock || end(sourceDocks) == destDock)
             continue;
 
         // If the scene file is faulty and has more than one connection starting from the same dock
         // two connections would be created which will lead to errors later on. This is why we need to
-        // make sure that the startDock does not have a connection yet.
+        // make sure that the source dock does not have a connection yet.
         if (nullptr == (*sourceDock)->getConnection())
         {
             auto connection = new CuteConnection{*sourceDock};
             if (!connection)
                 return;
 
-            connection->setEndItem(*destDock);
+            connection->setDestinationItem(*destDock);
             connection->setAsValid();
             addItem(connection);
         }
     }
-}
-
-void NodeScene::writeConnections(QJsonObject& json) const
-{
-    QJsonArray connectionArray;
-
-    const auto connections = getItemsOfType<CuteConnection>();
-    for (const auto& connection: connections)
-    {
-        QJsonObject connectionJson;
-        const auto source = qgraphicsitem_cast<CuteDock*>(connection->getStartItem());
-        const auto dest   = qgraphicsitem_cast<CuteDock*>(connection->getEndItem());
-        if (!source || !dest)
-            continue;
-
-        connectionJson["source"] = source->getUuid().toString();
-        connectionJson["dest"]   = dest->getUuid().toString();
-        connectionArray.append(connectionJson);
-    }
-
-    json["connections"] = connectionArray;
 }
 
 void NodeScene::write(QJsonObject& json) const
@@ -118,7 +97,7 @@ void NodeScene::write(QJsonObject& json) const
 
     QJsonArray nodeArray;
 
-    const auto nodes = getItemsOfType<CuteNode>();
+    const auto& nodes = getItemsOfType<CuteNode>();
     for (const auto& node: nodes)
     {
         QJsonObject nodeJson;
@@ -128,6 +107,27 @@ void NodeScene::write(QJsonObject& json) const
     json["nodes"] = nodeArray;
 
     writeConnections(json);
+}
+
+void NodeScene::writeConnections(QJsonObject& json) const
+{
+    QJsonArray connectionArray;
+
+    const auto& connections = getItemsOfType<CuteConnection>();
+    for (const auto& connection: connections)
+    {
+        QJsonObject connectionJson;
+        const auto source = qgraphicsitem_cast<CuteOutputDock*>(connection->getSourceItem());
+        const auto dest   = qgraphicsitem_cast<CuteInputDock*>(connection->getDestinationItem());
+        if (!source || !dest)
+            continue;
+
+        connectionJson["source"] = source->getUuid().toString();
+        connectionJson["dest"]   = dest->getUuid().toString();
+        connectionArray.append(connectionJson);
+    }
+
+    json["connections"] = connectionArray;
 }
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
@@ -294,9 +294,9 @@ bool NodeScene::draggedNodePositionIsValid(const QGraphicsItem* node, const QPoi
 
 void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
 {
-    _drawnConnection->updateEndPoint(mousePos);
+    _drawnConnection->updateDestinationItemPosition(mousePos);
 
-    auto prevEndItem = _drawnConnection->getEndItem();
+    auto prevEndItem = _drawnConnection->getDestinationItem();
     bool showingPreview = false;
 
     auto item = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
@@ -315,7 +315,7 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
         if (prevEndItem != dock)
         {
             dock->showConnectionPreview();
-            _drawnConnection->setEndItem(dock);
+            _drawnConnection->setDestinationItem(dock);
         }
         showingPreview = true;
     }
@@ -331,7 +331,7 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
         if (existingConnection)
             existingConnection->hideDeletionPreview();
 
-        _drawnConnection->setEndItem(nullptr);
+        _drawnConnection->setDestinationItem(nullptr);
     }
 }
 
@@ -353,7 +353,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             _drawnConnection = new CuteConnection{clickedItem};
             // this ensures that the connection's spline is valid
-            _drawnConnection->updateEndPoint(event->scenePos());
+            _drawnConnection->updateDestinationItemPosition(event->scenePos());
             addItem(_drawnConnection);
         }
         else if (itemType == CuteInputDock::Type)
@@ -366,7 +366,7 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
                 // set connection to invalid (drawing) state
                 _drawnConnection = connection;
-                _drawnConnection->setEndItem(nullptr);
+                _drawnConnection->setDestinationItem(nullptr);
             }
         }
     }
@@ -410,7 +410,7 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     delete existingConnection;
                 }
 
-                _drawnConnection->setEndItem(dock);
+                _drawnConnection->setDestinationItem(dock);
                 _drawnConnection->setZValue(-2.0); // hide behind nodes
                 _drawnConnection->setAsValid();
             }
