@@ -27,6 +27,7 @@ private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
     void readConnections(const QJsonArray& connections);
+    void writeConnections(QJsonObject& json) const;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
     void addMenuEntriesForSingleSelection(const QPointF& scenePos, QMenu& menu);

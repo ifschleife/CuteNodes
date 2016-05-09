@@ -4,6 +4,7 @@
 #include "CuteDock.h"
 #include "CuteNode.h"
 
+#include <math.h>
 #include <QAction>
 #include <QGraphicsSceneMouseEvent>
 #include <QJsonArray>
@@ -86,6 +87,27 @@ void NodeScene::readConnections(const QJsonArray& connections)
     }
 }
 
+void NodeScene::writeConnections(QJsonObject& json) const
+{
+    QJsonArray connectionArray;
+
+    const auto connections = getItemsOfType<CuteConnection>();
+    for (const auto& connection: connections)
+    {
+        QJsonObject connectionJson;
+        const auto source = qgraphicsitem_cast<CuteDock*>(connection->getStartItem());
+        const auto dest   = qgraphicsitem_cast<CuteDock*>(connection->getEndItem());
+        if (!source || !dest)
+            continue;
+
+        connectionJson["source"] = source->getUuid().toString();
+        connectionJson["dest"]   = dest->getUuid().toString();
+        connectionArray.append(connectionJson);
+    }
+
+    json["connections"] = connectionArray;
+}
+
 void NodeScene::write(QJsonObject& json) const
 {
     auto sceneObject = json["scene"].toObject();
@@ -104,6 +126,8 @@ void NodeScene::write(QJsonObject& json) const
         nodeArray.append(nodeJson);
     }
     json["nodes"] = nodeArray;
+
+    writeConnections(json);
 }
 
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
