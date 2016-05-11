@@ -19,7 +19,7 @@ public:
     };
 
 public:
-    explicit CuteDock(QGraphicsItem* parent, const DockType dockType, const QPointF& pos);
+    explicit CuteDock(QGraphicsItem* parent, const DockType dockType);
     ~CuteDock() override;
 
     void read(const QJsonObject& json);

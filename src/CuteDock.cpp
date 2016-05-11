@@ -15,13 +15,12 @@ namespace
 }
 
 
-CuteDock::CuteDock(QGraphicsItem* parent, const DockType dockType, const QPointF& pos)
+CuteDock::CuteDock(QGraphicsItem* parent, const DockType dockType)
     : QGraphicsItem(parent)
     , _brush{defaultColor}
     , _type{dockType}
 {
     setAcceptHoverEvents(true);
-    setPos(pos);
 
     if (parent)
         _paintRect.setWidth(parent->boundingRect().width() - 2.0);
