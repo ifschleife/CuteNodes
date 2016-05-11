@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = nullptr);
+    explicit MainWindow(const QString& sceneToOpen, QWidget* parent = nullptr);
     ~MainWindow() override;
 
 private slots:
@@ -28,6 +28,7 @@ private slots:
     void on_actionSaveSceneAs_triggered();
 
 private:
+    void LoadSceneFromFile();
     void SaveSceneToFile(QFile& sceneFile);
 
 private:
