@@ -52,8 +52,13 @@ void NodeScene::read(const QJsonObject& json)
 
 void NodeScene::readConnections(const QJsonArray& connections)
 {
-    const auto sourceDocks = getItemsOfType<CuteInputDock>();
-    const auto destDocks   = getItemsOfType<CuteOutputDock>();
+    auto allDocks = getItemsOfType<CuteDock>();
+    const auto barrier = std::partition(begin(allDocks), end(allDocks), [](const auto& dock)
+    {
+        return dock->isInputDock();
+    });
+    const auto sourceDocks = std::vector<CuteDock*>({begin(allDocks), barrier});
+    const auto destDocks   = std::vector<CuteDock*>({barrier, end(allDocks)});
 
     for (const auto& cfg: connections)
     {
@@ -117,8 +122,8 @@ void NodeScene::writeConnections(QJsonObject& json) const
     for (const auto& connection: connections)
     {
         QJsonObject connectionJson;
-        const auto source = qgraphicsitem_cast<CuteOutputDock*>(connection->getSourceItem());
-        const auto dest   = qgraphicsitem_cast<CuteInputDock*>(connection->getDestinationItem());
+        const auto source = connection->getSourceItem();
+        const auto dest   = connection->getDestinationItem();
         if (!source || !dest)
             continue;
 
@@ -299,10 +304,10 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
     auto prevEndItem = _drawnConnection->getDestinationItem();
     bool showingPreview = false;
 
-    auto item = getTopLevelItemAtPos(mousePos, CuteInputDock::Type);
-    auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
+    auto item = getTopLevelItemAtPos(mousePos, CuteDock::Type);
+    auto dock = qgraphicsitem_cast<CuteDock*>(item);
 
-    if (dock)
+    if (dock && dock->isInputDock())
     {
         // if dock already has a connection, that connection will be removed upon mouse release
         auto existingConnection = dock->getConnection();
@@ -323,7 +328,7 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
     // only hide previously shown preview when there was one
     if (prevEndItem && !showingPreview)
     {
-        auto prevDock = qgraphicsitem_cast<CuteInputDock*>(prevEndItem);
+        auto prevDock = qgraphicsitem_cast<CuteDock*>(prevEndItem);
         prevDock->hideConnectionPreview();
 
         // also hide the preview for a connection deletion, if previous dock had a connection
@@ -349,24 +354,27 @@ void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             startDraggingSelectedNodes(event->scenePos());
         }
-        else if (itemType == CuteOutputDock::Type)
+        else if (itemType == CuteDock::Type)
         {
-            _drawnConnection = new CuteConnection{clickedItem};
-            // this ensures that the connection's spline is valid
-            _drawnConnection->updateDestinationItemPosition(event->scenePos());
-            addItem(_drawnConnection);
-        }
-        else if (itemType == CuteInputDock::Type)
-        {
-            auto dock = qgraphicsitem_cast<CuteInputDock*>(clickedItem);
-            auto connection = dock->getConnection();
-            if (connection)
+            auto dock = qgraphicsitem_cast<CuteDock*>(clickedItem);
+            if (dock->isOutputDock())
             {
-                dock->setConnection(nullptr); // remove connection from dock
+                _drawnConnection = new CuteConnection{dock};
+                // this ensures that the connection's spline is valid
+                _drawnConnection->updateDestinationItemPosition(event->scenePos());
+                addItem(_drawnConnection);
+            }
+            else if (dock->isInputDock())
+            {
+                auto connection = dock->getConnection();
+                if (connection)
+                {
+                    dock->setConnection(nullptr); // remove connection from dock
 
-                // set connection to invalid (drawing) state
-                _drawnConnection = connection;
-                _drawnConnection->setDestinationItem(nullptr);
+                    // set connection to invalid (drawing) state
+                    _drawnConnection = connection;
+                    _drawnConnection->setDestinationItem(nullptr);
+                }
             }
         }
     }
@@ -399,10 +407,10 @@ void NodeScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         if (_drawnConnection)
         {
-            auto item = getTopLevelItemAtPos(event->scenePos(), CuteInputDock::Type);
-            auto dock = qgraphicsitem_cast<CuteInputDock*>(item);
+            auto item = getTopLevelItemAtPos(event->scenePos(), CuteDock::Type);
+            auto dock = qgraphicsitem_cast<CuteDock*>(item);
 
-            if (dock)
+            if (dock && dock->isInputDock())
             {
                 auto existingConnection = dock->getConnection();
                 if (existingConnection)

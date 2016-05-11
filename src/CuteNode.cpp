@@ -45,7 +45,7 @@ void CuteNode::read(const QJsonObject& json)
     for (const auto& inputCfg: inputs)
     {
         const auto dockPos = QPointF{0.0, verticalDockOffset + _inputConnectors.size()*verticalDockDist};
-        auto dock = new CuteInputDock{this, dockPos};
+        auto dock = new CuteDock{this, CuteDock::DockType::Input, dockPos};
         dock->read(inputCfg.toObject());
 
         _inputConnectors.push_back(dock);
@@ -56,7 +56,7 @@ void CuteNode::read(const QJsonObject& json)
     for (const auto& cfg: outputs)
     {
         const auto dockPos = QPointF{120.0, verticalDockOffset + (_inputConnectors.size() + _outputConnectors.size())*verticalDockDist};
-        auto dock = new CuteOutputDock{this, dockPos};
+        auto dock = new CuteDock{this, CuteDock::DockType::Output, dockPos};
         dock->read(cfg.toObject());
 
         _outputConnectors.push_back(dock);

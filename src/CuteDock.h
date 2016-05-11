@@ -12,7 +12,14 @@ class CuteConnection;
 class CuteDock : public QGraphicsItem
 {
 public:
-    explicit CuteDock(QGraphicsItem* parent, const QPointF& pos);
+    enum class DockType : uint32_t
+    {
+        Input,
+        Output
+    };
+
+public:
+    explicit CuteDock(QGraphicsItem* parent, const DockType dockType, const QPointF& pos);
     ~CuteDock() override;
 
     void read(const QJsonObject& json);
@@ -30,6 +37,9 @@ public:
     CuteConnection* getConnection() const          { return _connection; }
     void setConnection(CuteConnection* connection) { _connection = connection; }
 
+    bool isInputDock() const  { return _type == DockType::Input; }
+    bool isOutputDock() const { return _type == DockType::Output; }
+
     void hideConnectionPreview();
     void showConnectionPreview();
 
@@ -44,27 +54,6 @@ private:
     CuteConnection* _connection{nullptr};
     QStaticText     _name{"dock"};
     QRectF          _paintRect{0.0, 0.0, 20.0, 10.0};
+    DockType        _type;
     QUuid           _uuid;
-};
-
-
-class CuteInputDock : public CuteDock
-{
-public:
-    explicit CuteInputDock(QGraphicsItem* parent, const QPointF& pos) : CuteDock(parent, pos) {}
-    ~CuteInputDock() override {}
-
-    enum { Type = UserType + 3 };
-    int type() const override { return Type; }
-};
-
-
-class CuteOutputDock : public CuteDock
-{
-public:
-    explicit CuteOutputDock(QGraphicsItem* parent, const QPointF& pos) : CuteDock(parent, pos) {}
-    ~CuteOutputDock() override {}
-
-    enum { Type = UserType + 4 };
-    int type() const override { return Type; }
 };

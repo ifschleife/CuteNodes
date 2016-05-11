@@ -27,11 +27,11 @@ namespace
 }
 
 
-CuteConnection::CuteConnection(QGraphicsItem* sourceItem)
-    : QGraphicsPathItem{QPainterPath{sourceItem->scenePos()}}
-    , _connectedItems{sourceItem, nullptr}
-    , _destItemPos{sourceItem->scenePos()}
-    , _sourceItemPos{sourceItem->scenePos()}
+CuteConnection::CuteConnection(CuteDock* source)
+    : QGraphicsPathItem{QPainterPath{source->scenePos()}}
+    , _connectedDocks{source, nullptr}
+    , _destItemPos{source->scenePos()}
+    , _sourceItemPos{source->scenePos()}
 {
     setAcceptHoverEvents(true);
     setFlags(flags() | ItemIsSelectable);
@@ -44,28 +44,26 @@ CuteConnection::CuteConnection(QGraphicsItem* sourceItem)
 CuteConnection::~CuteConnection()
 {
     // invalidate both ends of the connection before deleting the connection
-    auto sourceItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
-    if (sourceItem)
-        sourceItem->setConnection(nullptr);
-    auto destItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
-    if (destItem)
-        destItem->setConnection(nullptr);
+    if (_connectedDocks.first)
+        _connectedDocks.first->setConnection(nullptr);
+    if (_connectedDocks.second)
+        _connectedDocks.second->setConnection(nullptr);
 }
 
 
-QGraphicsItem* CuteConnection::getDestinationItem() const
+CuteDock* CuteConnection::getDestinationItem() const
 {
-    return _connectedItems.second;
+    return _connectedDocks.second;
 }
 
-void CuteConnection::setDestinationItem(QGraphicsItem* item)
+void CuteConnection::setDestinationItem(CuteDock* item)
 {
-    _connectedItems.second = item;
+    _connectedDocks.second = item;
 }
 
-QGraphicsItem* CuteConnection::getSourceItem() const
+CuteDock* CuteConnection::getSourceItem() const
 {
-    return _connectedItems.first;
+    return _connectedDocks.first;
 }
 
 void CuteConnection::hideDeletionPreview()
@@ -80,13 +78,11 @@ void CuteConnection::showDeletionPreview()
 
 void CuteConnection::setAsValid()
 {
-    auto inputDock  = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
-    auto outputDock = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
-    if (!inputDock || !outputDock)
+    if (!_connectedDocks.first || !_connectedDocks.second)
         return;
 
-    inputDock->setConnection(this);
-    outputDock->setConnection(this);
+    _connectedDocks.first->setConnection(this);
+    _connectedDocks.second->setConnection(this);
 }
 
 void CuteConnection::updateDestinationItemPosition(const QPointF& destItemPos)
@@ -152,13 +148,11 @@ void CuteConnection::paint(QPainter* painter, const QStyleOptionGraphicsItem*, Q
 
 void CuteConnection::snapEndPointsToItems()
 {
-    const auto sourceItem = qgraphicsitem_cast<CuteOutputDock*>(_connectedItems.first);
-    if (sourceItem)
-        _sourceItemPos = sourceItem->getConnectionMagnet();
+    if (_connectedDocks.first)
+        _sourceItemPos = _connectedDocks.first->getConnectionMagnet();
 
-    const auto destItem = qgraphicsitem_cast<CuteInputDock*>(_connectedItems.second);
-    if (destItem)
-        _destItemPos = destItem->getConnectionMagnet();
+    if (_connectedDocks.second)
+        _destItemPos = _connectedDocks.second->getConnectionMagnet();
 }
 
 void CuteConnection::calculateSpline()
