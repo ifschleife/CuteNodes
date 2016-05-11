@@ -2,6 +2,8 @@
 
 #include <QGraphicsItem>
 #include <QPen>
+#include <QPixmap>
+#include <QStaticText>
 
 
 class CuteDock;
@@ -24,12 +26,14 @@ public:
 private:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    void paintHeader(QPainter* painter);
 
 private:
     std::vector<CuteDock*> _inputConnectors;
     std::vector<CuteDock*> _outputConnectors;
 
-    QString _name{"Cute Node"};
-    QRectF  _paintRect{0.0, 0.0, 140.0, 300.0};
-    QPen    _pen{Qt::black};
+    QPixmap     _icon;
+    QStaticText _name{"Cute Node"};
+    QRectF      _paintRect{0.0, 0.0, 140.0, 300.0};
+    QPen        _pen{Qt::black};
 };

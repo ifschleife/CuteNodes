@@ -12,7 +12,7 @@
     [
         {
             "name": "Node 1",
-            "icon": "Path to Icon",
+            "icon": "../templates/test1/icon.png",
             "xpos": 200.0,
             "ypos": 200.0,
             "inputs":
@@ -54,7 +54,7 @@
         },
         {
             "name": "Node 2",
-            "icon": "Path to Icon",
+            "icon": "../templates/test2/icon.png",
             "xpos": 500.0,
             "ypos": 200.0,
             "inputs":

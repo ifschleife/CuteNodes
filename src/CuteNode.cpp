@@ -2,6 +2,7 @@
 
 #include "CuteDock.h"
 
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QPainter>
@@ -9,15 +10,18 @@
 
 namespace
 {
-    constexpr qreal verticalDockOffset = 50.0;
-    constexpr qreal verticalDockDist   = 30.0;
+    constexpr QRectF headerRect         = {10.0, 10.0, 120.0, 64.0};
+    constexpr qreal  verticalDockOffset = 90.0;
+    constexpr qreal  verticalDockDist   = 30.0;
 }
 
 
 CuteNode::CuteNode(QGraphicsItem* parent)
     : QGraphicsItem(parent)
+    , _icon{}
 {
     setFlags(flags() | ItemContainsChildrenInShape | ItemIsMovable | ItemIsSelectable);
+    _icon.fill(Qt::black);
 }
 
 CuteNode::~CuteNode()
@@ -59,11 +63,17 @@ void CuteNode::read(const QJsonObject& json)
     }
 
     _name = json["name"].toString();
+
+    QFile pathToIcon(json["icon"].toString());
+    if (pathToIcon.exists())
+    {
+        _icon.load(pathToIcon.fileName());
+    }
 }
 
 void CuteNode::write(QJsonObject& json) const
 {
-    json["name"] = _name;
+    json["name"] = _name.text();
     json["xpos"] = scenePos().x();
     json["ypos"] = scenePos().y();
 
@@ -103,4 +113,15 @@ void CuteNode::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
     painter->setPen(_pen);
     painter->setBrush(brush);
     painter->drawRect(_paintRect);
+
+    paintHeader(painter);
+}
+
+void CuteNode::paintHeader(QPainter* painter)
+{
+    painter->setPen(Qt::black);
+    painter->drawRect(headerRect);
+    if (!_icon.isNull())
+        painter->drawPixmap({10, 10, 64, 64}, _icon);
+    painter->drawStaticText(QPointF{80.0, 42.0}, _name);
 }
