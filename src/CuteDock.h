@@ -2,6 +2,7 @@
 
 #include <QBrush>
 #include <QGraphicsItem>
+#include <QStaticText>
 #include <QUuid>
 
 
@@ -36,11 +37,12 @@ private:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 private:
     QBrush          _brush;
     CuteConnection* _connection{nullptr};
+    QStaticText     _name{"dock"};
     QRectF          _paintRect{0.0, 0.0, 20.0, 10.0};
     QUuid           _uuid;
 };

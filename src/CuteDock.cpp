@@ -2,6 +2,7 @@
 
 #include "CuteConnection.h"
 
+#include <QFont>
 #include <QJsonObject>
 #include <QPainter>
 
@@ -10,6 +11,7 @@ namespace
 {
     const QColor defaultColor = Qt::green;
     const QColor hoverColor   = Qt::blue;
+    const QFont sansFont{"DejaVu Sans Mono", 8};
 }
 
 
@@ -35,11 +37,13 @@ void CuteDock::read(const QJsonObject& json)
 {
     const auto idString = json["id"].toString();
     _uuid = QUuid(idString);
+    _name = json["name"].toString();
 }
 
 void CuteDock::write(QJsonObject& json) const
 {
-    json["id"] = _uuid.toString();
+    json["id"]   = _uuid.toString();
+    json["name"] = _name.text();
 }
 
 QRectF CuteDock::boundingRect() const
@@ -85,4 +89,18 @@ void CuteDock::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
     painter->setPen({_brush.color()});
     painter->setBrush(_brush);
     painter->drawRect(_paintRect);
+
+    painter->setPen(Qt::black);
+    painter->setFont(sansFont);
+    _name.prepare(QTransform(), sansFont);
+
+    if (qgraphicsitem_cast<CuteInputDock*>(this))
+    {
+        painter->drawStaticText(QPointF{25.0, 0.0}, _name);
+    }
+    else
+    {
+        const qreal xpos = -_name.size().width() - 5.0;
+        painter->drawStaticText(QPointF{xpos, 0.0}, _name);
+    }
 }
