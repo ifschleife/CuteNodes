@@ -62,7 +62,7 @@
                 {
                     "id": "{549e5ad0-c85c-4f4b-a48d-7128551182ca}",
                     "type": "int",
-                    "name": "foo"
+                    "name": "some input [int]"
                 }
             ],
             "outputs":
