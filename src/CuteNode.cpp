@@ -12,7 +12,7 @@ namespace
 {
     constexpr QRectF headerRect         = {10.0, 10.0, 120.0, 64.0};
     constexpr qreal  verticalDockOffset = 90.0;
-    constexpr qreal  verticalDockDist   = 30.0;
+    constexpr qreal  verticalDockDist   = 15.0;
 }
 
 
@@ -60,7 +60,7 @@ void CuteNode::read(const QJsonObject& json)
         auto dock = new CuteDock{this, CuteDock::DockType::Output};
         dock->read(cfg.toObject());
 
-        const auto dockPos = QPointF{120.0, verticalDockOffset + (_inputConnectors.size() + _outputConnectors.size())*verticalDockDist};
+        const auto dockPos = QPointF{0.0, verticalDockOffset + (_inputConnectors.size() + _outputConnectors.size())*verticalDockDist};
         dock->setPos(dockPos);
 
         _outputConnectors.push_back(dock);
