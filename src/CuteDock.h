@@ -30,6 +30,8 @@ public:
 
     QRectF boundingRect() const override;
 
+    bool canAcceptConnectionAtPos(const QPointF& scenePos) const;
+
     QUuid getUuid() const { return _uuid; }
 
     QPointF getConnectionMagnet() const;
@@ -44,6 +46,8 @@ public:
     void showConnectionPreview();
 
 private:
+    void calculateConnectorPath(const qreal connectorHeight);
+
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
@@ -52,8 +56,9 @@ private:
 private:
     QBrush          _brush;
     CuteConnection* _connection{nullptr};
-    QStaticText     _name{"dock"};
-    QRectF          _paintRect{0.0, 0.0, 20.0, 10.0};
+    QPainterPath    _connectorPath{{0.0, 0.0}};
+    QStaticText     _name;
+    QPointF         _namePos{0.0, 0.0};
     DockType        _type;
     QUuid           _uuid;
 };

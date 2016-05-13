@@ -301,13 +301,13 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
 {
     _drawnConnection->updateDestinationItemPosition(mousePos);
 
-    auto prevEndItem = _drawnConnection->getDestinationItem();
+    const auto prevDestItem = _drawnConnection->getDestinationItem();
     bool showingPreview = false;
 
-    auto item = getTopLevelItemAtPos(mousePos, CuteDock::Type);
-    auto dock = qgraphicsitem_cast<CuteDock*>(item);
+    const auto item = getTopLevelItemAtPos(mousePos, CuteDock::Type);
+    const auto dock = qgraphicsitem_cast<CuteDock*>(item);
 
-    if (dock && dock->isInputDock())
+    if (dock && dock->canAcceptConnectionAtPos(mousePos))
     {
         // if dock already has a connection, that connection will be removed upon mouse release
         auto existingConnection = dock->getConnection();
@@ -317,7 +317,7 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
         }
 
         // only show preview once
-        if (prevEndItem != dock)
+        if (prevDestItem != dock)
         {
             dock->showConnectionPreview();
             _drawnConnection->setDestinationItem(dock);
@@ -326,9 +326,9 @@ void NodeScene::handleConnectionDrawing(const QPointF& mousePos) const
     }
 
     // only hide previously shown preview when there was one
-    if (prevEndItem && !showingPreview)
+    if (prevDestItem && !showingPreview)
     {
-        auto prevDock = qgraphicsitem_cast<CuteDock*>(prevEndItem);
+        const auto prevDock = qgraphicsitem_cast<CuteDock*>(prevDestItem);
         prevDock->hideConnectionPreview();
 
         // also hide the preview for a connection deletion, if previous dock had a connection

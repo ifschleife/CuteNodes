@@ -9,9 +9,13 @@
 
 namespace
 {
-    const QColor defaultColor = Qt::green;
-    const QColor hoverColor   = Qt::blue;
-    const QFont sansFont{"DejaVu Sans Mono", 6};
+    const QColor    defaultColor = Qt::green;
+    const QColor    hoverColor   = Qt::blue;
+    const QFont     sansFont{"DejaVu Sans Mono", 6};
+
+    constexpr qreal connectorToNameMargin{5.0};
+    constexpr qreal connectorDefaultHeight{10.0};
+    constexpr qreal connectorWidth{10.0};
 }
 
 
@@ -22,8 +26,7 @@ CuteDock::CuteDock(QGraphicsItem* parent, const DockType dockType)
 {
     setAcceptHoverEvents(true);
 
-    if (parent)
-        _paintRect.setWidth(parent->boundingRect().width() - 2.0);
+    calculateConnectorPath(connectorDefaultHeight);
 }
 
 CuteDock::~CuteDock()
@@ -35,13 +38,23 @@ CuteDock::~CuteDock()
     }
 }
 
-
 void CuteDock::read(const QJsonObject& json)
 {
     const auto idString = json["id"].toString();
     _uuid = QUuid(idString);
     _name = json["name"].toString();
     _name.prepare(QTransform(), sansFont);
+
+    if (isInputDock())
+    {
+        _namePos.setX(_connectorPath.boundingRect().right() + connectorToNameMargin);
+    }
+    else
+    {
+        _namePos.setX(_connectorPath.boundingRect().left() - _name.size().width() - connectorToNameMargin);
+    }
+
+    calculateConnectorPath(_name.size().height());
 }
 
 void CuteDock::write(QJsonObject& json) const
@@ -52,12 +65,19 @@ void CuteDock::write(QJsonObject& json) const
 
 QRectF CuteDock::boundingRect() const
 {
-    return _paintRect;
+    const auto width  = parentItem() ? parentItem()->boundingRect().width() - 2.0 : 100.0;
+    const auto height = _name.size().height();
+    return {0.0, 0.0, width, height};
+}
+
+bool CuteDock::canAcceptConnectionAtPos(const QPointF& scenePos) const
+{
+    return isInputDock() && _connectorPath.boundingRect().contains(mapFromScene(scenePos));
 }
 
 QPointF CuteDock::getConnectionMagnet() const
 {
-    return mapToScene(_paintRect.center());
+    return mapToScene(_connectorPath.boundingRect().center());
 }
 
 void CuteDock::hideConnectionPreview()
@@ -70,6 +90,23 @@ void CuteDock::showConnectionPreview()
 {
     _brush.setColor(hoverColor);
     update();
+}
+
+void CuteDock::calculateConnectorPath(const qreal connectorHeight)
+{
+    const auto connectorRect = QRectF{0.0, 0.0, connectorWidth, connectorHeight};
+    auto path = QPainterPath{{0.0, 0.0}};
+    path.moveTo(connectorRect.right(), connectorRect.center().y());
+    path.lineTo(connectorRect.bottomLeft());
+    path.lineTo(connectorRect.topLeft());
+    path.closeSubpath();
+
+    if (isOutputDock())
+    {
+        path.translate(boundingRect().width() - connectorRect.width(), 0.0);
+    }
+
+    _connectorPath.swap(path);
 }
 
 void CuteDock::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
@@ -92,19 +129,9 @@ void CuteDock::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
 {
     painter->setPen({_brush.color()});
     painter->setBrush(_brush);
-    painter->drawRect(_paintRect);
+    painter->drawPath(_connectorPath);
 
     painter->setPen(Qt::black);
     painter->setFont(sansFont);
-//    _name.prepare(QTransform(), sansFont);
-
-    if (isInputDock())
-    {
-        painter->drawStaticText(QPointF{25.0, 0.0}, _name);
-    }
-    else if (isOutputDock())
-    {
-        const qreal xpos = -_name.size().width() - 5.0;
-        painter->drawStaticText(QPointF{xpos, 0.0}, _name);
-    }
+    painter->drawStaticText(_namePos, _name);
 }
