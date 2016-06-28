@@ -3,6 +3,8 @@ project(CuteNodes)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/bin)
 
+set(CMAKE_CXX_STANDARD 14)
+
 if(WIN32)
     file(TO_CMAKE_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug" ProjectDebugOut)
     file(MAKE_DIRECTORY "${ProjectDebugOut}")
@@ -14,8 +16,7 @@ if(WIN32)
     endif()
 
 elseif(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra -Werror -pedantic -pedantic-errors \
-                                            -Wfloat-conversion")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic -pedantic-errors") 
 endif()
 
 set(CMAKE_AUTOMOC ON)
