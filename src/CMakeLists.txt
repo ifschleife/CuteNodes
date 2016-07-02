@@ -8,15 +8,6 @@ set(SOURCES
     NodeView.cpp
     )
 
-set(HEADERS
-    CuteConnection.h
-    CuteDock.h
-    CuteNode.h
-    MainWindow.h
-    NodeScene.h
-    NodeView.h
-    )
-
 set(UI_FILES
     MainWindow.ui
     )
@@ -28,7 +19,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 add_executable(${PROJECT_NAME} WIN32
-    ${SOURCES} ${HEADERS} ${UI_FILES} ${QRC_FILES})
+    ${SOURCES} ${UI_FILES} ${QRC_FILES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 
