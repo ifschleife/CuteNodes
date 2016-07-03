@@ -10,6 +10,19 @@
 #include <QJsonObject>
 
 
+namespace
+{
+    const QJsonObject kNewSceneAttributes
+    {
+        {"name",    QObject::tr("New Scene")},
+        {"width",   3000},
+        {"height",  3000},
+        {"centerx", 1500},
+        {"centery", 1500}
+    };
+}
+
+
 MainWindow::MainWindow(const QString& sceneToOpen, QWidget* parent)
     : QMainWindow(parent)
     , _scene{nullptr}
@@ -25,9 +38,26 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::on_actionExit_triggered()
+{
+    QApplication::quit();
+}
+
+void MainWindow::on_actionNewScene_triggered()
+{
+    _sceneFileName.clear();
+
+    QJsonObject newSceneDescription
+    {
+        {"scene", kNewSceneAttributes}
+    };
+
+    CreateScene(newSceneDescription);
+}
+
 void MainWindow::on_actionLoadScene_triggered()
 {
-    _sceneFileName = QFileDialog::getOpenFileName(this, tr("Open Scene"), "..", tr("JSON (*.json)"));
+    _sceneFileName = QFileDialog::getOpenFileName(this, tr("Open Scene"), "..", "JSON (*.json)");
     if (_sceneFileName.isNull())
         return;
 
@@ -37,27 +67,25 @@ void MainWindow::on_actionLoadScene_triggered()
 void MainWindow::on_actionSaveScene_triggered()
 {
     QFile sceneFile{_sceneFileName};
-    if (!sceneFile.open(QIODevice::WriteOnly))
-    {
-        _sceneFileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "..", tr("JSON (*.json)"));
-        sceneFile.setFileName(_sceneFileName);
-        if (!sceneFile.open(QIODevice::ReadWrite))
-            return;
-    }
 
-    SaveSceneToFile(sceneFile);
+    if (!_sceneFileName.isEmpty() && sceneFile.open(QIODevice::WriteOnly))
+    {
+        SaveSceneToFile(sceneFile);
+    }
+    else
+    {
+        on_actionSaveSceneAs_triggered();
+    }
 }
 
 void MainWindow::on_actionSaveSceneAs_triggered()
 {
-    _sceneFileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "..", tr("JSON (*.json)"));
+    _sceneFileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "..", "JSON (*.json)");
     QFile sceneFile(_sceneFileName);
     if (!sceneFile.open(QIODevice::WriteOnly))
         return;
 
     SaveSceneToFile(sceneFile);
-
-    setWindowTitle(_sceneFileName);
 }
 
 void MainWindow::LoadSceneFromFile()
@@ -78,14 +106,19 @@ void MainWindow::LoadSceneFromFile()
         return;
     }
 
+    CreateScene(document.object());
+}
+
+void MainWindow::CreateScene(const QJsonObject& json)
+{
     if (_scene)
     {
+        disconnect(_ui->actionToggleGrid,    &QAction::triggered, _scene.get(), &NodeScene::toggleGridVisibility);
         disconnect(_ui->actionToggleSnap,    &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
         disconnect(_ui->actionToggleOverlap, &QAction::triggered, _scene.get(), &NodeScene::toggleNodeOverlap);
     }
-    _scene = std::make_unique<NodeScene>();
 
-    const auto json = document.object();
+    _scene = std::make_unique<NodeScene>();
     _scene->read(json);
 
     _ui->nodeView->setScene(_scene.get());
@@ -93,10 +126,11 @@ void MainWindow::LoadSceneFromFile()
     const auto centery = json["scene"].toObject()["centery"].toDouble();
     _ui->nodeView->centerOn(centerx, centery);
 
+    connect(_ui->actionToggleGrid,    &QAction::triggered, _scene.get(), &NodeScene::toggleGridVisibility);
     connect(_ui->actionToggleSnap,    &QAction::triggered, _scene.get(), &NodeScene::toggleGridSnapping);
     connect(_ui->actionToggleOverlap, &QAction::triggered, _scene.get(), &NodeScene::toggleNodeOverlap);
 
-    setWindowTitle(_sceneFileName);
+    setWindowTitle(_sceneFileName.isEmpty() ? json["scene"].toObject()["name"].toString() : _sceneFileName);
 }
 
 void MainWindow::SaveSceneToFile(QFile& sceneFile)
@@ -113,4 +147,6 @@ void MainWindow::SaveSceneToFile(QFile& sceneFile)
 
     const auto document = QJsonDocument(json);
     sceneFile.write(document.toJson());
+
+    setWindowTitle(_sceneFileName);
 }

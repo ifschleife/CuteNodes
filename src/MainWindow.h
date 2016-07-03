@@ -23,11 +23,14 @@ public:
     ~MainWindow() override;
 
 private slots:
+    void on_actionExit_triggered();
     void on_actionLoadScene_triggered();
+    void on_actionNewScene_triggered();
     void on_actionSaveScene_triggered();
     void on_actionSaveSceneAs_triggered();
 
 private:
+    void CreateScene(const QJsonObject& json);
     void LoadSceneFromFile();
     void SaveSceneToFile(QFile& sceneFile);
 

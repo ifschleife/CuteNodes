@@ -20,18 +20,6 @@ namespace
 }
 
 
-NodeScene::NodeScene()
-    : QGraphicsScene()
-{
-
-}
-
-NodeScene::~NodeScene()
-{
-
-}
-
-
 void NodeScene::read(const QJsonObject& json)
 {
     const auto sceneCfg = json["scene"].toObject();
@@ -135,8 +123,17 @@ void NodeScene::writeConnections(QJsonObject& json) const
     json["connections"] = connectionArray;
 }
 
+void NodeScene::toggleGridVisibility()
+{
+    _gridVisible = !_gridVisible;
+    invalidate(); // redraw entire scene
+}
+
 void NodeScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
+    if (!_gridVisible)
+        return;
+
     const QRectF backgroundRect = sceneRect() & rect;
     const qreal left = int(backgroundRect.left()) - (int(backgroundRect.left()) % _gridSize.width());
     const qreal top = int(backgroundRect.top()) - (int(backgroundRect.top()) % _gridSize.height());

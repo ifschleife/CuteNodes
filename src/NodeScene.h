@@ -13,15 +13,16 @@ class QMenu;
 class NodeScene : public QGraphicsScene
 {
 public:
-    explicit NodeScene();
-    ~NodeScene() override;
+    NodeScene() = default;
+    ~NodeScene() override = default;
 
     void read(const QJsonObject& json);
     void write(QJsonObject& json) const;
 
 public slots:
-    void toggleGridSnapping()  { _gridSnapping  = !_gridSnapping; }
-    void toggleNodeOverlap()   { _nodeOverlap   = !_nodeOverlap;  }
+    void toggleGridVisibility();
+    void toggleGridSnapping() { _gridSnapping = !_gridSnapping; }
+    void toggleNodeOverlap()  { _nodeOverlap  = !_nodeOverlap;  }
 
 private:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
@@ -54,6 +55,7 @@ private:
 private:
     QSize                    _gridSize{20, 20};
     bool                     _gridSnapping{true};
+    bool                     _gridVisible{true};
     bool                     _nodeOverlap{false};
 
     // temps
