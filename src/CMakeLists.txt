@@ -13,6 +13,7 @@ set(UI_FILES
     )
 
 set(QRC_FILES
+    ../res/resources.qrc
     )
 
 find_package(Qt5Core REQUIRED)

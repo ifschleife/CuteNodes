@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/load_scene.png</file>
+        <file>icons/new_scene.png</file>
+        <file>icons/save_scene.png</file>
+    </qresource>
+</RCC>

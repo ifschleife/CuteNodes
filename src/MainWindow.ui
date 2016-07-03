@@ -29,6 +29,28 @@
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNewScene"/>
+    <addaction name="actionLoadScene"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveScene"/>
+    <addaction name="actionSaveSceneAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionToggleGrid"/>
+    <addaction name="actionToggleSnap"/>
+    <addaction name="actionToggleOverlap"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -37,17 +59,20 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNewScene"/>
    <addaction name="actionLoadScene"/>
    <addaction name="actionSaveScene"/>
-   <addaction name="actionSaveSceneAs"/>
-   <addaction name="actionToggleGrid"/>
-   <addaction name="actionToggleSnap"/>
-   <addaction name="actionToggleOverlap"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionToggleGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>ToggleGrid</string>
+    <string>Grid &amp;Visibility</string>
    </property>
    <property name="toolTip">
     <string>Toggle grid visibility</string>
@@ -61,7 +86,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>ToggleSnap</string>
+    <string>Grid &amp;Snapping</string>
    </property>
    <property name="toolTip">
     <string>Toggle grid snapping</string>
@@ -72,15 +97,19 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Toggle Overlap</string>
+    <string>Node &amp;Overlapping</string>
    </property>
    <property name="toolTip">
     <string>Toggle Node overlap</string>
    </property>
   </action>
   <action name="actionLoadScene">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/load_scene.png</normaloff>:/icons/load_scene.png</iconset>
+   </property>
    <property name="text">
-    <string>LoadScene</string>
+    <string>&amp;Load Scene</string>
    </property>
    <property name="toolTip">
     <string>Load scene from file</string>
@@ -90,8 +119,12 @@
    </property>
   </action>
   <action name="actionSaveScene">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/save_scene.png</normaloff>:/icons/save_scene.png</iconset>
+   </property>
    <property name="text">
-    <string>SaveScene</string>
+    <string>&amp;Save Scene</string>
    </property>
    <property name="toolTip">
     <string>Save scene to file</string>
@@ -102,10 +135,39 @@
   </action>
   <action name="actionSaveSceneAs">
    <property name="text">
-    <string>SaveSceneAs</string>
+    <string>Save Scene &amp;As ...</string>
    </property>
    <property name="toolTip">
     <string>Save Scene to a different file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionNewScene">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icons/new_scene.png</normaloff>:/icons/new_scene.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New Scene</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new empty scene</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit the application</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
@@ -117,6 +179,8 @@
    <header>NodeView.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
