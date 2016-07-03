@@ -72,11 +72,13 @@ void CuteNode::read(const QJsonObject& json)
     if (pathToIcon.exists())
     {
         _icon.load(pathToIcon.fileName());
+        _iconPath = pathToIcon.fileName();
     }
 }
 
 void CuteNode::write(QJsonObject& json) const
 {
+    json["icon"] = _iconPath;
     json["name"] = _name.text();
     json["xpos"] = scenePos().x();
     json["ypos"] = scenePos().y();

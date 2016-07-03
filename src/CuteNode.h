@@ -33,6 +33,7 @@ private:
     std::vector<CuteDock*> _outputConnectors;
 
     QPixmap     _icon;
+    QString     _iconPath;
     QStaticText _name{"Cute Node"};
     QRectF      _paintRect{0.0, 0.0, 140.0, 300.0};
     QPen        _pen{Qt::black};
