@@ -31,7 +31,14 @@ MainWindow::MainWindow(const QString& sceneToOpen, QWidget* parent)
 {
     _ui->setupUi(this);
 
-    LoadSceneFromFile();
+    if (_sceneFileName.isEmpty())
+    {
+        on_actionNewScene_triggered();
+    }
+    else
+    {
+        LoadSceneFromFile();
+    }
 }
 
 MainWindow::~MainWindow()
