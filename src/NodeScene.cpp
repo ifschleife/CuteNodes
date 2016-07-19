@@ -3,6 +3,7 @@
 #include "CuteConnection.h"
 #include "CuteDock.h"
 #include "CuteNode.h"
+#include "NodeFactory.h"
 
 #include <math.h>
 #include <QAction>
@@ -19,6 +20,12 @@ namespace
     constexpr qreal ZValueShowOnTop = 1.0;
 }
 
+
+NodeScene::NodeScene()
+    : _nodeFactory{&NodeFactory::getInstance()}
+{
+
+}
 
 void NodeScene::read(const QJsonObject& json)
 {
@@ -179,7 +186,7 @@ void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
     }
     else
     {
-        addMenuEntriesForEmptySelection(event->scenePos(), menu);
+        addMenuEntriesForEmptySelection(event->scenePos(), *menu.addMenu(tr("Add Node")));
     }
 
     menu.exec(event->screenPos());
@@ -200,15 +207,18 @@ void NodeScene::addMenuEntriesForSingleSelection(const QPointF& scenePos, QMenu&
 
 void NodeScene::addMenuEntriesForEmptySelection(const QPointF& scenePos, QMenu& menu)
 {
-    const auto newNodeAction{new QAction{tr("Add Node"), &menu}};
-    connect(newNodeAction, &QAction::triggered, [&]()
+    const QStringList nodeTypes = _nodeFactory->getNodeTypeNames();
+    for (const auto& nodeType : nodeTypes)
     {
-        auto node = new CuteNode;
+        menu.addAction(new QAction{nodeType, &menu});
+    }
+
+    connect(&menu, &QMenu::triggered, [&](QAction* action)
+    {
+        auto node = _nodeFactory->createNode(action->text());
         node->setPos(scenePos);
         addItem(node);
     });
-
-    menu.addAction(newNodeAction);
 }
 
 void NodeScene::addMenuEntriesForMultiSelection(QMenu& menu)

@@ -1,0 +1,23 @@
+{
+    "name": "Divider",
+    "icon": "icon.png",
+    "inputs":
+    [
+        {
+            "type": "int",
+            "name": "dividend"
+        },
+        {
+            "type": "int",
+            "name": "divisor"
+        }
+    ],
+    "outputs":
+    [
+        {
+            "type": "float",
+            "name": "result"
+        }
+    ]
+}
+

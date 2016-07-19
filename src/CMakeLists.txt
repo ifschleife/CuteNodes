@@ -4,6 +4,7 @@ set(SOURCES
     CuteNode.cpp
     main.cpp
     MainWindow.cpp
+    NodeFactory.cpp
     NodeScene.cpp
     NodeView.cpp
     )

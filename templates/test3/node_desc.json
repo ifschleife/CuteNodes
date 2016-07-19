@@ -1,0 +1,23 @@
+{
+    "name": "Multiplicator",
+    "icon": "icon.png",
+    "inputs":
+    [
+        {
+            "type": "int",
+            "name": "input1"
+        },
+        {
+            "type": "int",
+            "name": "input2"
+        }
+    ],
+    "outputs":
+    [
+        {
+            "type": "int",
+            "name": "result"
+        }
+    ]
+}
+

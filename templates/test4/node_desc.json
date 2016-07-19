@@ -1,0 +1,19 @@
+{
+    "name": "Negator",
+    "icon": "icon.png",
+    "inputs":
+    [
+        {
+            "type": "int",
+            "name": "input"
+        }
+    ],
+    "outputs":
+    [
+        {
+            "type": "int",
+            "name": "negated"
+        }
+    ]
+}
+

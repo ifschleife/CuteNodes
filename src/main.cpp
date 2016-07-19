@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QDir>
 
 
 int main(int argc, char** argv)
@@ -21,6 +22,9 @@ int main(int argc, char** argv)
 
     const auto posArgs = parser.positionalArguments();
     const auto sceneFileName = posArgs.isEmpty() ? QString() : posArgs.first();
+
+    // go one level up from bin directory, this will be the root directory for the project
+    QDir::setCurrent("..");
 
     MainWindow window{sceneFileName};
     window.show();

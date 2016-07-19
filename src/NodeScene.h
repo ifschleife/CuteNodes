@@ -5,6 +5,7 @@
 
 
 class CuteConnection;
+class NodeFactory;
 class QMenu;
 
 
@@ -13,7 +14,7 @@ class QMenu;
 class NodeScene : public QGraphicsScene
 {
 public:
-    NodeScene() = default;
+    NodeScene();
     ~NodeScene() override = default;
 
     void read(const QJsonObject& json);
@@ -56,6 +57,7 @@ private:
     QSize                    _gridSize{20, 20};
     bool                     _gridSnapping{true};
     bool                     _gridVisible{true};
+    NodeFactory*             _nodeFactory{nullptr};
     bool                     _nodeOverlap{false};
 
     // temps

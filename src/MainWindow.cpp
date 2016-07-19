@@ -64,7 +64,7 @@ void MainWindow::on_actionNewScene_triggered()
 
 void MainWindow::on_actionLoadScene_triggered()
 {
-    _sceneFileName = QFileDialog::getOpenFileName(this, tr("Open Scene"), "..", "JSON (*.json)");
+    _sceneFileName = QFileDialog::getOpenFileName(this, tr("Open Scene"), ".", "JSON (*.json)");
     if (_sceneFileName.isNull())
         return;
 
@@ -87,7 +87,7 @@ void MainWindow::on_actionSaveScene_triggered()
 
 void MainWindow::on_actionSaveSceneAs_triggered()
 {
-    _sceneFileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "..", "JSON (*.json)");
+    _sceneFileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), ".", "JSON (*.json)");
     QFile sceneFile(_sceneFileName);
     if (!sceneFile.open(QIODevice::WriteOnly))
         return;

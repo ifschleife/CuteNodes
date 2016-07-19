@@ -1,0 +1,15 @@
+{
+    "name": "RNG",
+    "icon": "icon.png",
+    "inputs":
+    [
+    ],
+    "outputs":
+    [
+        {
+            "type": "int",
+            "name": "random number"
+        }
+    ]
+}
+
