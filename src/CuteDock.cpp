@@ -11,7 +11,7 @@ namespace
 {
     const QColor    defaultColor = Qt::green;
     const QColor    hoverColor   = Qt::blue;
-    const QFont     sansFont{"DejaVu Sans Mono", 6};
+    const QFont     sansFont{"DejaVu Sans Mono", 8};
 
     constexpr qreal connectorToNameMargin{5.0};
     constexpr qreal connectorDefaultHeight{10.0};

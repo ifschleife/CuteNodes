@@ -10,9 +10,9 @@
 
 namespace
 {
-    constexpr QRectF headerRect         = {10.0, 10.0, 120.0, 64.0};
-    constexpr qreal  verticalDockOffset = 90.0;
-    constexpr qreal  verticalDockDist   = 15.0;
+    constexpr QRectF headerRect         = {5.0, 5.0, 130.0, 50.0};
+    constexpr qreal  verticalDockOffset = 70.0;
+    constexpr qreal  verticalDockDist   = 20.0;
 }
 
 
@@ -36,6 +36,8 @@ QRectF CuteNode::boundingRect() const
 
 void CuteNode::read(const QJsonObject& json)
 {
+    qreal bottomPos = 70.0;
+
     const auto xpos = json["xpos"].toDouble();
     const auto ypos = json["ypos"].toDouble();
     setPos(xpos, ypos);
@@ -47,8 +49,10 @@ void CuteNode::read(const QJsonObject& json)
         auto dock = new CuteDock{this, CuteDock::DockType::Input};
         dock->read(inputCfg.toObject());
 
-        const auto dockPos = QPointF{0.0, verticalDockOffset + _inputConnectors.size()*verticalDockDist};
-        dock->setPos(dockPos);
+        const auto dockPosVertical = verticalDockOffset + _inputConnectors.size()*verticalDockDist;
+        dock->setPos({0.0, dockPosVertical});
+
+        bottomPos = dockPosVertical;
 
         _inputConnectors.push_back(dock);
     }
@@ -60,8 +64,10 @@ void CuteNode::read(const QJsonObject& json)
         auto dock = new CuteDock{this, CuteDock::DockType::Output};
         dock->read(cfg.toObject());
 
-        const auto dockPos = QPointF{0.0, verticalDockOffset + (_inputConnectors.size() + _outputConnectors.size())*verticalDockDist};
-        dock->setPos(dockPos);
+        const auto dockPosVertical = verticalDockOffset + (_inputConnectors.size() + _outputConnectors.size()) * verticalDockDist;
+        dock->setPos({0.0, dockPosVertical});
+
+        bottomPos = dockPosVertical;
 
         _outputConnectors.push_back(dock);
     }
@@ -74,6 +80,10 @@ void CuteNode::read(const QJsonObject& json)
         _icon.load(pathToIcon.fileName());
         _iconPath = pathToIcon.fileName();
     }
+
+    bottomPos += (1.5*verticalDockDist); // padding
+
+    _paintRect.setBottom(bottomPos);
 }
 
 void CuteNode::write(QJsonObject& json) const
@@ -128,6 +138,6 @@ void CuteNode::paintHeader(QPainter* painter)
     painter->setPen(Qt::black);
     painter->drawRect(headerRect);
     if (!_icon.isNull())
-        painter->drawPixmap({10, 10, 64, 64}, _icon);
-    painter->drawStaticText(QPointF{80.0, 42.0}, _name);
+        painter->drawPixmap({5, 5, 50, 50}, _icon);
+    painter->drawStaticText(QPointF{80.0, 25.0}, _name);
 }
